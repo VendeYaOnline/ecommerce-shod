@@ -1,0 +1,29 @@
+.card-product {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: white;
+  cursor: pointer;
+}
+
+.item-color {
+  background-color: orange;
+  border: 2px solid rgb(219, 221, 250);
+  border-radius: 100%;
+  width: 20px;
+  height: 20px;
+}
+
+.container-colors {
+  opacity: 0;
+  visibility: hidden;
+  gap: 7px;
+  display: flex;
+  transition: opacity 500ms ease, visibility 0ms 500ms;
+}
+
+.card-product:hover .container-colors {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 500ms ease, visibility 0ms;
+}
