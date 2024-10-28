@@ -1,2 +1,3 @@
 import Cant from "./cant/Cant";
-export { Cant };
+import DashBoard from "./dashboard/Dashboard";
+export { Cant, DashBoard };
