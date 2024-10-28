@@ -1,19 +1,18 @@
 "use client";
 
+import { useState } from "react";
+import Link from "next/link";
 import Image, { StaticImageData } from "next/image";
+import { ArrowLeft } from "lucide-react";
+import { Cant } from "@/components";
 import classes from "./Tenis.module.css";
 import Imagen1 from "/public/products/tenis-1_1.png";
 import Imagen2 from "/public/products/tenis-1_2.png";
 import Imagen3 from "/public/products/tenis-1_3.png";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import { Cant } from "@/components";
-import { useState } from "react";
 
 const Product = () => {
   const [value, setValue] = useState(1);
-  const [selectedSize, setSelectedSize] = useState(0);
-  const [selectedImage, setSelectedImage] = useState<StaticImageData>(Imagen1);
+  const [imageSelect, setImageSelect] = useState<StaticImageData>(Imagen1);
 
   return (
     <div>
@@ -32,7 +31,7 @@ const Product = () => {
             height={100}
             alt="Producto"
             className="rounded-xl cursor-pointer"
-            onClick={() => setSelectedImage(Imagen1)}
+            onClick={() => setImageSelect(Imagen1)}
           />
           <Image
             src={Imagen2}
@@ -40,7 +39,7 @@ const Product = () => {
             height={100}
             alt="Producto"
             className="rounded-xl cursor-pointer"
-            onClick={() => setSelectedImage(Imagen2)}
+            onClick={() => setImageSelect(Imagen2)}
           />
           <Image
             src={Imagen3}
@@ -48,11 +47,11 @@ const Product = () => {
             height={100}
             alt="Producto"
             className="rounded-xl cursor-pointer"
-            onClick={() => setSelectedImage(Imagen3)}
+            onClick={() => setImageSelect(Imagen3)}
           />
         </div>
         <Image
-          src={selectedImage}
+          src={imageSelect}
           width={700}
           height={500}
           alt="image-product"
