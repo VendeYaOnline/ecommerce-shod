@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Header } from "./header/Header";
 import { Sidebar } from "./siderbar/Siderbar";
+import { Products, Sales, Contact, Banner, Bulletin } from "./views";
 
 function DashBoard() {
   const [view, setView] = useState(1);
@@ -10,19 +11,19 @@ function DashBoard() {
   const typeView = (view: number) => {
     switch (view) {
       case 1:
-        return <h1>1</h1>;
+        return <Sales />;
 
       case 2:
-        return <h1>2</h1>;
+        return <Products />;
 
       case 3:
-        return <h1>3</h1>;
+        return <Contact />;
 
       case 4:
-        return <h1>4</h1>;
+        return <Banner />;
 
       case 5:
-        return <h1>5</h1>;
+        return <Bulletin />;
     }
   };
   return (
