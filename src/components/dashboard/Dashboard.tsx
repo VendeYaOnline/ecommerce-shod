@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Header } from "./header/Header";
-import { Sidebar } from "./siderbar/Siderbar";
+import { Header } from "./components/header/Header";
+import { Sidebar } from "./components/siderbar/Siderbar";
 import {
   Products,
   Sales,

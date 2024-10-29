@@ -1,6 +1,6 @@
 import { Button } from "@/components";
 import { useState } from "react";
-import ModalForm from "../../modal-form/ModalForm";
+import ModalForm from "../../components/modal-form/ModalForm";
 
 const Products = () => {
   const [openModal, setOpenModal] = useState(false);

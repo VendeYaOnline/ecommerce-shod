@@ -2,11 +2,11 @@
 
 import { list } from "@/functions";
 import Button from "../button/Button";
+import classes from "./ModalForm.module.css";
+import { CircleX, ImageUp } from "lucide-react";
 import Input from "../input/Input";
 import Select from "../select/Select";
 import Textarea from "../textarea/Textarea";
-import classes from "./ModalForm.module.css";
-import { CircleX, ImageUp } from "lucide-react";
 
 interface Props {
   active: boolean;
@@ -14,7 +14,6 @@ interface Props {
 }
 
 const ModalForm = ({ active, onClose }: Props) => {
-
   return (
     active && (
       <section className={classes["container-modal"]}>
@@ -55,7 +54,7 @@ const ModalForm = ({ active, onClose }: Props) => {
 
           <div className="mt-2 flex flex-col gap-1">
             <label>Atributo</label>
-            <Select list={list}/>
+            <Select list={list} />
           </div>
 
           <div className="mt-2 flex flex-col gap-1">
