@@ -2,5 +2,6 @@ import Products from "./products/Products";
 import Sales from "./sales/Sales";
 import Contact from "./contact/Contact";
 import Banner from "./banner/Banner";
-import Bulletin from "./bulletin/Bulletin";
-export { Products, Sales, Contact, Banner, Bulletin };
+import Attributes from "./attributes/Attributes";
+import Settings from "./settings/Settings";
+export { Products, Sales, Contact, Banner, Attributes, Settings };

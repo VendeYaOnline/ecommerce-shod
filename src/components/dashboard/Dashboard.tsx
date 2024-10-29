@@ -3,7 +3,14 @@
 import { useState } from "react";
 import { Header } from "./header/Header";
 import { Sidebar } from "./siderbar/Siderbar";
-import { Products, Sales, Contact, Banner, Bulletin } from "./views";
+import {
+  Products,
+  Sales,
+  Contact,
+  Banner,
+  Attributes,
+  Settings,
+} from "./views";
 
 function DashBoard() {
   const [view, setView] = useState(1);
@@ -17,13 +24,16 @@ function DashBoard() {
         return <Products />;
 
       case 3:
-        return <Contact />;
+        return <Attributes />;
 
       case 4:
-        return <Banner />;
+        return <Contact />;
 
       case 5:
-        return <Bulletin />;
+        return <Banner />;
+
+      case 6:
+        return <Settings />;
     }
   };
   return (
