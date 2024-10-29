@@ -1,7 +1,9 @@
 "use client";
 
+import { list } from "@/functions";
 import Button from "../button/Button";
 import Input from "../input/Input";
+import Select from "../select/Select";
 import Textarea from "../textarea/Textarea";
 import classes from "./ModalForm.module.css";
 import { CircleX, ImageUp } from "lucide-react";
@@ -12,6 +14,7 @@ interface Props {
 }
 
 const ModalForm = ({ active, onClose }: Props) => {
+
   return (
     active && (
       <section className={classes["container-modal"]}>
@@ -23,7 +26,7 @@ const ModalForm = ({ active, onClose }: Props) => {
                 onClose();
               }}
             />
-            <h1 className="mb-2 font-bold">Formulario</h1>
+            <h1 className="mb-2 font-bold text-xl">Crear un producto</h1>
           </div>
 
           <div className="relative mt-1">
@@ -48,6 +51,11 @@ const ModalForm = ({ active, onClose }: Props) => {
               <label htmlFor="title">Descuento</label>
               <Input />
             </div>
+          </div>
+
+          <div className="mt-2 flex flex-col gap-1">
+            <label>Atributo</label>
+            <Select list={list}/>
           </div>
 
           <div className="mt-2 flex flex-col gap-1">

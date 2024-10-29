@@ -4,7 +4,7 @@ import {
   Package,
   Mail,
   ShoppingCart,
-  Clipboard,
+  PencilRuler,
 } from "lucide-react";
 import { SidebarLink } from "./SidebarLink";
 import { Dispatch, SetStateAction } from "react";
@@ -35,21 +35,22 @@ export function Sidebar({ view, setView }: Props) {
           selectItem={() => setView(2)}
           active={view === 2}
         />
+
         <SidebarLink
-          icon={<Mail size={20} />}
-          text="Contacto"
+          icon={<PencilRuler size={20} />}
+          text="Atributos"
           selectItem={() => setView(3)}
           active={view === 3}
         />
         <SidebarLink
-          icon={<FileText size={20} />}
-          text="Banner"
+          icon={<Mail size={20} />}
+          text="Contacto"
           selectItem={() => setView(4)}
           active={view === 4}
         />
         <SidebarLink
-          icon={<Clipboard size={20} />}
-          text="Boletín"
+          icon={<FileText size={20} />}
+          text="Banner"
           selectItem={() => setView(5)}
           active={view === 5}
         />
@@ -58,7 +59,7 @@ export function Sidebar({ view, setView }: Props) {
       <div className="mt-auto pt-8 absolute bottom-5">
         <SidebarLink
           icon={<Settings size={20} />}
-          text="Settings"
+          text="Configuraciones"
           selectItem={() => setView(6)}
           active={view === 6}
         />
