@@ -1,0 +1,98 @@
+.container-modal {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(43, 41, 41, 0.541);
+  backdrop-filter: blur(10px);
+  z-index: 20;
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+}
+
+.form-modal {
+  width: 500px;
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  animation: fadeUp 500ms ease;
+}
+
+.container-image {
+  width: 200px;
+  height: 200px;
+  border-radius: 10px;
+  position: absolute;
+  top: 0;
+  opacity: 0;
+}
+
+.capa {
+  width: 200px;
+  height: 200px;
+  background-color: rgb(241, 242, 245);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes fadeUp {
+  0% {
+    transform: translateY(60px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+
+.form-modal > h1 {
+  font-size: 20px;
+}
+
+.input {
+  outline: none;
+  border-radius: 5px;
+  border: 1px solid rgba(182, 181, 181, 0.486);
+  padding: 10px;
+  width: 100%;
+  transition: 500ms ease;
+}
+
+.input:focus {
+  border: 1px solid #6c30f7;
+}
+
+.button-modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #6c30f7;
+  color: white;
+  padding: 10px;
+  width: 100%;
+  border-radius: 5px;
+  margin-top: 30px;
+  transition: 500ms ease;
+}
+
+.button-modal:hover {
+  background-color: #4313b3;
+}
+
+@media (max-width: 524px) {
+  .form-modal {
+    width: auto;
+    margin: 20px;
+  }
+}
