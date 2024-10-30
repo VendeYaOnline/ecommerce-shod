@@ -46,7 +46,9 @@ const users: User[] = [
   },
 ];
 
-const Table = () => {
+const headers = ["Nombre del atributo", "Tipo", "Valores"];
+
+const TableAttribute = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="mx-auto">
@@ -54,41 +56,24 @@ const Table = () => {
           <div className="p-6">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900">Atributos</h2>
-              <button className="rounded-md bg-gray-50 px-3 py-1 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">
-                View all
-              </button>
             </div>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
                 <tr className="border-t border-gray-200 bg-gray-50/50">
-                  <th className="px-6 py-3 text-left">
-                    <div className="flex items-center gap-2 text-sm font-medium text-gray-500">
-                      Name
-                      <ArrowUpDown className="h-4 w-4" />
-                    </div>
-                  </th>
-                  <th className="px-6 py-3 text-left">
-                    <div className="flex items-center gap-2 text-sm font-medium text-gray-500">
-                      Email
-                      <ArrowUpDown className="h-4 w-4" />
-                    </div>
-                  </th>
-                  <th className="px-6 py-3 text-left">
-                    <div className="flex items-center gap-2 text-sm font-medium text-gray-500">
-                      Role
-                      <ArrowUpDown className="h-4 w-4" />
-                    </div>
-                  </th>
-                  <th className="px-6 py-3 text-left">
-                    <span className="text-sm font-medium text-gray-500">
-                      Status
-                    </span>
-                  </th>
+                  {headers.map((header, index) => (
+                    <th key={index} className="px-6 py-3 text-left">
+                      <div className="flex items-center gap-2 text-sm font-medium text-gray-500">
+                        {header}
+                        <ArrowUpDown className="h-4 w-4" />
+                      </div>
+                    </th>
+                  ))}
+
                   <th className="px-6 py-3 text-right">
                     <span className="text-sm font-medium text-gray-500">
-                      Actions
+                      Acciones
                     </span>
                   </th>
                 </tr>
@@ -115,28 +100,7 @@ const Table = () => {
                     <td className="px-6 py-4">
                       <span className="text-gray-600">{user.role}</span>
                     </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                          user.status === "Active"
-                            ? "bg-green-50 text-green-700"
-                            : user.status === "Away"
-                            ? "bg-yellow-50 text-yellow-700"
-                            : "bg-gray-50 text-gray-700"
-                        }`}
-                      >
-                        <span
-                          className={`mr-1 h-1.5 w-1.5 rounded-full ${
-                            user.status === "Active"
-                              ? "bg-green-600"
-                              : user.status === "Away"
-                              ? "bg-yellow-600"
-                              : "bg-gray-600"
-                          }`}
-                        />
-                        {user.status}
-                      </span>
-                    </td>
+
                     <td className="px-6 py-4 text-right">
                       <button className="rounded-md p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-gray-100">
                         <MoreHorizontal className="h-4 w-4 text-gray-500" />
@@ -158,4 +122,4 @@ const Table = () => {
   );
 };
 
-export default Table;
+export default TableAttribute;

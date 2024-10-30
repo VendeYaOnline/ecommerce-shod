@@ -6,6 +6,7 @@ import { attributes } from "@/functions";
 import { ChangeEvent, FormEvent, useState } from "react";
 import Input from "../input/Input";
 import AttributeColor from "../attribute-color/AttributeColor";
+import Size from "../size/Size";
 
 interface Props {
   active: boolean;
@@ -15,12 +16,12 @@ interface Props {
 const ModalAttribute = ({ active, onClose }: Props) => {
   const [type, setType] = useState("");
   const [colors, setColors] = useState<{ name: string; color: string }[]>([]);
+  const [size, setSize] = useState<string[]>([]);
   const [isValid, setisValid] = useState(false);
   const [nameAttribute, setNameAttribute] = useState("");
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Data", nameAttribute, colors);
   };
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -39,11 +40,11 @@ const ModalAttribute = ({ active, onClose }: Props) => {
           />
         );
 
-      case "Tamaño":
-        return <h1>Tamaño</h1>;
+      case "Peso":
+        return <h1>Peso</h1>;
 
       case "Talla":
-        return <h1>Talla</h1>;
+        return <Size sizes={size} setSizes={setSize} />;
     }
   };
 

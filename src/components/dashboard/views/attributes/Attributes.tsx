@@ -1,6 +1,6 @@
 import { PencilRuler } from "lucide-react";
 import Button from "../../components/button/Button";
-import Table from "../../components/table/Table";
+import TableAttribute from "../../components/table-attribute/TableAttribute";
 import ModalAttribute from "../../components/modal-attribute/ModalAttribute";
 import { useState } from "react";
 
@@ -17,7 +17,7 @@ const Attributes = () => {
         active={activeModal}
         onClose={() => setActiveModal(false)}
       />
-      <Table />
+      <TableAttribute />
     </section>
   );
 };

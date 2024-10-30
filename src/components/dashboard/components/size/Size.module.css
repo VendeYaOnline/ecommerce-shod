@@ -1,0 +1,28 @@
+.burble {
+  background-color: #6256ca;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 10px;
+  color: white;
+  padding: 5px 10px;
+  font-size: small;
+  border: 1px solid gainsboro;
+}
+
+.add-color {
+  background-color: #6256caa9;
+  color: white;
+  font-size: small;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
+.add-color-active {
+  background-color: #6256ca;
+  color: white;
+  font-size: small;
+  border-radius: 5px;
+  padding: 5px 10px;
+}

@@ -3,21 +3,18 @@ export const attributes = [
     id: 1,
     name: "Color",
   },
+
   {
     id: 2,
-    name: "Tamaño",
-  },
-  {
-    id: 3,
     name: "Talla",
   },
 
   {
-    id: 4,
+    id: 3,
     name: "Peso",
   },
   {
-    id: 5,
+    id: 4,
     name: "Dimensión",
   },
 ];
