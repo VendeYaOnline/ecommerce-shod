@@ -1,7 +1,20 @@
+import { ChangeEvent } from "react";
 import classes from "./Input.module.css";
 
-const Input = () => {
-  return <input className={classes.input} id="title" />;
+interface Props {
+  value?: string;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+}
+
+const Input = ({ value, onChange }: Props) => {
+  return (
+    <input
+      value={value}
+      onChange={onChange}
+      className={classes.input}
+      id="title"
+    />
+  );
 };
 
 export default Input;

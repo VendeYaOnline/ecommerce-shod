@@ -1,13 +1,21 @@
+import { ReactNode } from "react";
 import classes from "./Button.module.css";
 
 interface Props {
-  children: string;
+  children: string | ReactNode;
+  disabled?: boolean;
   onClik?: () => void;
 }
 
-const Button = ({ children, onClik }: Props) => {
+const Button = ({ children, onClik, disabled }: Props) => {
   return (
-    <button onClick={onClik} className={classes.button}>
+    <button
+      disabled={disabled}
+      onClick={onClik}
+      className={
+        disabled ? classes["button-disabled"] : classes["button-active"]
+      }
+    >
       {children}
     </button>
   );

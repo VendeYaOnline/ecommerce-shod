@@ -7,6 +7,7 @@ import { CircleX, ImageUp } from "lucide-react";
 import Input from "../input/Input";
 import Select from "../select/Select";
 import Textarea from "../textarea/Textarea";
+import { useState } from "react";
 
 interface Props {
   active: boolean;
@@ -14,6 +15,8 @@ interface Props {
 }
 
 const ModalForm = ({ active, onClose }: Props) => {
+  const [value, setValue] = useState("");
+
   return (
     active && (
       <section className={classes["container-modal"]}>
@@ -54,7 +57,12 @@ const ModalForm = ({ active, onClose }: Props) => {
 
           <div className="mt-2 flex flex-col gap-1">
             <label>Atributo</label>
-            <Select list={list} />
+            <Select
+              data={list}
+              value={value}
+              setValue={setValue}
+              placeholder="Selecciona atributo"
+            />
           </div>
 
           <div className="mt-2 flex flex-col gap-1">
