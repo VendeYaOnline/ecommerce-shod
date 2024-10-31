@@ -39,7 +39,7 @@ const AttributeColor = ({
         color: [...attributes.color, { name: name, color: selectedColor }],
       });
       setname("");
-      setSelectedColor("#FF9D3D");
+      setSelectedColor("#1A1A19");
       setError(false);
     } else {
       setError(true);
@@ -60,22 +60,23 @@ const AttributeColor = ({
   }, [nameAttribute, attributes.color]);
   return (
     <>
-      <div className="flex gap-5 justify-between items-center ">
-        <div>
-          <label>Nombre del color</label>
-          <Input
-            value={name}
-            onChange={onChange}
-            placeholder="Rojo, Azul, Negro..."
-          />
-        </div>
-        <div>
-          <input
-            type="color"
-            value={selectedColor}
-            className={classes["select-color"]}
-            onChange={(e) => setSelectedColor(e.target.value)}
-          />
+      <div>
+        <div className="flex flex-col">
+          <label className="text-slate-600 mb-2">Nombre del color</label>
+          <div className="flex justify-between items-center gap-4">
+            <Input
+              value={name}
+              onChange={onChange}
+              placeholder="Rojo, Azul, Negro..."
+            />
+
+            <input
+              type="color"
+              value={selectedColor}
+              className={classes["select-color"]}
+              onChange={(e) => setSelectedColor(e.target.value)}
+            />
+          </div>
         </div>
       </div>
       {error && (
