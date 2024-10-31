@@ -76,6 +76,7 @@ const ModalAttribute = ({ active, onClose }: Props) => {
               onClick={() => {
                 onClose();
                 setType("");
+                setNameAttribute("");
               }}
             />
             <h1 className="mb-2 font-bold text-xl">Crear un atributo</h1>

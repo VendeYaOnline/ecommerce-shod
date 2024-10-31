@@ -25,7 +25,12 @@ const Select = ({ data = [], value, setValue, placeholder }: Props) => {
 
   return (
     <div className={classes["container-select"]}>
-      <div className={classes.select} onClick={onChange}>
+      <div
+        className={
+          activeSelect ? classes["select-active"] : classes["select-disabled"]
+        }
+        onClick={onChange}
+      >
         <span className="text-slate-400 ml-1 flex justify-between items-center">
           {value !== "" ? value : placeholder}
           {activeSelect ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
