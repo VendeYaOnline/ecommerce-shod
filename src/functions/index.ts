@@ -17,6 +17,11 @@ export const attributes = [
     id: 4,
     name: "Dimensión",
   },
+
+  {
+    id: 5,
+    name: "Mililitro",
+  },
 ];
 
 export const list = [

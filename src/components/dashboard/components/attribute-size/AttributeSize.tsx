@@ -1,14 +1,28 @@
 import { CirclePlus, CircleX } from "lucide-react";
 import Input from "../input/Input";
-import classes from "./Size.module.css";
-import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
+import classes from "./AttributeSize.module.css";
+import {
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
+import { Attribute } from "@/interfaces";
 
 interface Props {
-  sizes: string[];
-  setSizes: Dispatch<SetStateAction<string[]>>;
+  attributes: Attribute;
+  setValueAttribute: Dispatch<SetStateAction<Attribute>>;
+  nameAttribute: string;
+  setisValid: Dispatch<SetStateAction<boolean>>;
 }
 
-const Size = ({ sizes, setSizes }: Props) => {
+const Size = ({
+  attributes,
+  setValueAttribute,
+  nameAttribute,
+  setisValid,
+}: Props) => {
   const [valueSize, setValueSize] = useState<string>("");
   const [error, setError] = useState(false);
 
@@ -17,8 +31,11 @@ const Size = ({ sizes, setSizes }: Props) => {
   };
 
   const addSize = () => {
-    if (!sizes.find((i) => i === valueSize)) {
-      setSizes([...sizes, valueSize]);
+    if (!attributes.size.find((i) => i === valueSize)) {
+      setValueAttribute({
+        ...attributes,
+        size: [...attributes.size, valueSize],
+      });
       setError(false);
       setValueSize("");
     } else {
@@ -27,15 +44,28 @@ const Size = ({ sizes, setSizes }: Props) => {
   };
 
   const removeSize = (name: string) => {
-    const newColors = sizes.filter((i) => i !== name);
-    setSizes(newColors);
+    const newSizes = attributes.size.filter((i) => i !== name);
+    setValueAttribute({ ...attributes, size: newSizes });
   };
+
+  useEffect(() => {
+    if (nameAttribute !== "" && attributes.size.length) {
+      setisValid(true);
+    } else {
+      setisValid(false);
+    }
+  }, [nameAttribute, attributes.size]);
 
   return (
     <div>
       <label className="text-slate-600">Valor</label>
       <div className="flex gap-2">
-        <Input type="number" value={valueSize} onChange={onChange} />
+        <Input
+          type="string"
+          value={valueSize}
+          onChange={onChange}
+          placeholder="S,M,XL o 32,34,40..."
+        />
         <button
           className={
             valueSize !== ""
@@ -52,7 +82,7 @@ const Size = ({ sizes, setSizes }: Props) => {
         <span className="text-xs text-red-700">La talla ya existe</span>
       )}
       <div className="flex flex-wrap gap-2 mt-3">
-        {sizes.map((size, index) => (
+        {attributes.size.map((size, index) => (
           <div key={index} className={classes.burble}>
             {size}
 

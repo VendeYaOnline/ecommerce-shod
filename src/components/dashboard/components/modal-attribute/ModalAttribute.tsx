@@ -3,10 +3,11 @@ import classes from "./ModalAttribute.module.css";
 import Button from "../button/Button";
 import Select from "../select/Select";
 import { attributes } from "@/functions";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Input from "../input/Input";
 import AttributeColor from "../attribute-color/AttributeColor";
-import Size from "../size/Size";
+import AttributeSize from "../attribute-size/AttributeSize";
+import { Attribute } from "@/interfaces";
 
 interface Props {
   active: boolean;
@@ -15,18 +16,28 @@ interface Props {
 
 const ModalAttribute = ({ active, onClose }: Props) => {
   const [type, setType] = useState("");
-  const [colors, setColors] = useState<{ name: string; color: string }[]>([]);
-  const [size, setSize] = useState<string[]>([]);
+  const [valueAttribute, setValueAttribute] = useState<Attribute>({
+    color: [],
+    size: [],
+  });
+
   const [isValid, setisValid] = useState(false);
   const [nameAttribute, setNameAttribute] = useState("");
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log("Nombre del atrobuto", nameAttribute);
+    console.log("Tipo del atrobuto", type);
+    console.log("Valor del atributo", valueAttribute);
   };
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNameAttribute(e.target.value);
   };
+
+  useEffect(() => {
+    setValueAttribute({ color: [], size: [] });
+  }, [type]);
 
   const typeAttribute = (value: string) => {
     switch (value) {
@@ -34,8 +45,8 @@ const ModalAttribute = ({ active, onClose }: Props) => {
         return (
           <AttributeColor
             nameAttribute={nameAttribute}
-            colors={colors}
-            setColors={setColors}
+            attributes={valueAttribute}
+            setValueAttribute={setValueAttribute}
             setisValid={setisValid}
           />
         );
@@ -44,7 +55,14 @@ const ModalAttribute = ({ active, onClose }: Props) => {
         return <h1>Peso</h1>;
 
       case "Talla":
-        return <Size sizes={size} setSizes={setSize} />;
+        return (
+          <AttributeSize
+            attributes={valueAttribute}
+            setValueAttribute={setValueAttribute}
+            nameAttribute={nameAttribute}
+            setisValid={setisValid}
+          />
+        );
     }
   };
 
