@@ -1,5 +1,4 @@
 import { CirclePlus, CircleX } from "lucide-react";
-import Input from "../input/Input";
 import classes from "./AttributeSize.module.css";
 import {
   ChangeEvent,
@@ -9,6 +8,7 @@ import {
   useState,
 } from "react";
 import { Attribute } from "@/interfaces";
+import Input from "../../input/Input";
 
 interface Props {
   attributes: Attribute;
@@ -17,7 +17,7 @@ interface Props {
   setisValid: Dispatch<SetStateAction<boolean>>;
 }
 
-const Size = ({
+const AttributeSize = ({
   attributes,
   setValueAttribute,
   nameAttribute,
@@ -98,4 +98,4 @@ const Size = ({
   );
 };
 
-export default Size;
+export default AttributeSize;

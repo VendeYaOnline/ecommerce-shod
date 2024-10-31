@@ -5,9 +5,8 @@ import Select from "../select/Select";
 import { attributes } from "@/functions";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Input from "../input/Input";
-import AttributeColor from "../attribute-color/AttributeColor";
-import AttributeSize from "../attribute-size/AttributeSize";
 import { Attribute } from "@/interfaces";
+import { AttributeColor, AttributeSize } from "../attributes";
 
 interface Props {
   active: boolean;

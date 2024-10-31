@@ -6,10 +6,10 @@ import {
   useState,
 } from "react";
 import classes from "./AttributeColor.module.css";
-import Input from "../input/Input";
 import { CircleX } from "lucide-react";
 import { getContrastingColor } from "@/functions";
 import { Attribute } from "@/interfaces";
+import Input from "../../input/Input";
 
 interface Props {
   nameAttribute: string;
