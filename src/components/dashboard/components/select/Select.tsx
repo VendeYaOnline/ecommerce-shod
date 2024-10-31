@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import classes from "./Select.module.css";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 
@@ -23,8 +23,28 @@ const Select = ({ data = [], value, setValue, placeholder }: Props) => {
     setActiveSelect((prev) => !prev);
   };
 
+  const handleClickOutside = (event: MouseEvent, activeSelect: boolean) => {
+    const elemento = document.getElementById("select");
+    if (elemento && !elemento.contains(event.target as Node)) {
+      if (activeSelect) {
+        setActiveSelect(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", (e) =>
+      handleClickOutside(e, activeSelect)
+    );
+    return () => {
+      document.removeEventListener("click", (e) =>
+        handleClickOutside(e, activeSelect)
+      );
+    };
+  }, [activeSelect]);
+
   return (
-    <div className={classes["container-select"]}>
+    <div className={classes["container-select"]} id="select">
       <div
         className={
           activeSelect ? classes["select-active"] : classes["select-disabled"]
