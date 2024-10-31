@@ -1,5 +1,3 @@
-import { CirclePlus, CircleX } from "lucide-react";
-import classes from "./AttributeSize.module.css";
 import {
   ChangeEvent,
   Dispatch,
@@ -7,8 +5,10 @@ import {
   useEffect,
   useState,
 } from "react";
-import { Attribute } from "@/interfaces";
 import Input from "../../input/Input";
+import classes from "./AttributeWeight.module.css";
+import { Attribute } from "@/interfaces";
+import { CirclePlus, CircleX } from "lucide-react";
 
 interface Props {
   attributes: Attribute;
@@ -17,13 +17,13 @@ interface Props {
   setisValid: Dispatch<SetStateAction<boolean>>;
 }
 
-const AttributeSize = ({
+const AttributeWeight = ({
   attributes,
-  setValueAttribute,
   nameAttribute,
+  setValueAttribute,
   setisValid,
 }: Props) => {
-  const [valueSize, setValueSize] = useState<string>("");
+  const [valueWeight, setValueWeight] = useState("");
   const [error, setError] = useState(false);
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -32,70 +32,67 @@ const AttributeSize = ({
       (e.target.value.length < 20 && regex.test(e.target.value)) ||
       e.target.value === ""
     ) {
-      setValueSize(e.target.value.toLocaleUpperCase());
+      setValueWeight(e.target.value.toLocaleUpperCase());
     }
   };
 
-  const addSize = () => {
-    if (!attributes.size.find((i) => i === valueSize)) {
+  const addWeight = () => {
+    if (!attributes.weight.find((i) => i === valueWeight)) {
       setValueAttribute({
         ...attributes,
-        size: [...attributes.size, valueSize],
+        weight: [...attributes.weight, valueWeight],
       });
       setError(false);
-      setValueSize("");
+      setValueWeight("");
     } else {
       setError(true);
     }
   };
 
-  const removeSize = (name: string) => {
-    const newSizes = attributes.size.filter((i) => i !== name);
-    setValueAttribute({ ...attributes, size: newSizes });
+  const removeWeight = (name: string) => {
+    const newSizes = attributes.weight.filter((i) => i !== name);
+    setValueAttribute({ ...attributes, weight: newSizes });
   };
 
   useEffect(() => {
-    if (nameAttribute !== "" && attributes.size.length) {
+    if (nameAttribute !== "" && attributes.weight.length) {
       setisValid(true);
     } else {
       setisValid(false);
     }
-  }, [nameAttribute, attributes.size]);
+  }, [nameAttribute, attributes.weight]);
 
   return (
     <div>
-      <label className="text-slate-600 block mb-2">Valor</label>
+      <label>Valor</label>
       <div className="flex gap-2">
         <Input
-          type="string"
-          value={valueSize}
+          value={valueWeight}
           onChange={onChange}
-          placeholder="S,M,XL o 32,34,40..."
+          placeholder="5LB,10LB o 5KG,10KG..."
         />
         <button
           className={
-            valueSize !== ""
+            valueWeight !== ""
               ? classes["add-color-active"]
               : classes["add-color"]
           }
-          onClick={addSize}
-          disabled={valueSize !== "" ? false : true}
+          onClick={addWeight}
+          disabled={valueWeight !== "" ? false : true}
         >
           <CirclePlus />
         </button>
       </div>
-      {error && (
-        <span className="text-xs text-red-700">La talla ya existe</span>
-      )}
+      {error && <span className="text-xs text-red-700">El peso ya existe</span>}
       <div className="flex flex-wrap gap-2 mt-3">
-        {attributes.size.map((size, index) => (
+        {attributes.weight.map((item, index) => (
           <div key={index} className={classes.burble}>
-            {size}
+            {item}
 
             <CircleX
               size={14}
               className="cursor-pointer"
-              onClick={() => removeSize(size)}
+              onClick={() => removeWeight(item)}
             />
           </div>
         ))}
@@ -104,4 +101,4 @@ const AttributeSize = ({
   );
 };
 
-export default AttributeSize;
+export default AttributeWeight;

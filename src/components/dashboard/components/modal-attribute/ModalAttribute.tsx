@@ -6,7 +6,7 @@ import { attributes } from "@/functions";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Input from "../input/Input";
 import { Attribute } from "@/interfaces";
-import { AttributeColor, AttributeSize } from "../attributes";
+import { AttributeColor, AttributeSize, AttributeWeight } from "../attributes";
 
 interface Props {
   active: boolean;
@@ -18,6 +18,7 @@ const ModalAttribute = ({ active, onClose }: Props) => {
   const [valueAttribute, setValueAttribute] = useState<Attribute>({
     color: [],
     size: [],
+    weight: [],
   });
 
   const [isValid, setisValid] = useState(false);
@@ -35,7 +36,7 @@ const ModalAttribute = ({ active, onClose }: Props) => {
   };
 
   useEffect(() => {
-    setValueAttribute({ color: [], size: [] });
+    setValueAttribute({ color: [], size: [], weight: [] });
   }, [type]);
 
   const typeAttribute = (value: string) => {
@@ -51,7 +52,14 @@ const ModalAttribute = ({ active, onClose }: Props) => {
         );
 
       case "Peso":
-        return <h1>Peso</h1>;
+        return (
+          <AttributeWeight
+            attributes={valueAttribute}
+            nameAttribute={nameAttribute}
+            setValueAttribute={setValueAttribute}
+            setisValid={setisValid}
+          />
+        );
 
       case "Talla":
         return (

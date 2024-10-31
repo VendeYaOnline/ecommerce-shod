@@ -1,3 +1,4 @@
 import AttributeColor from "./attribute-color/AttributeColor";
 import AttributeSize from "./attribute-size/AttributeSize";
-export { AttributeColor, AttributeSize };
+import AttributeWeight from "./attribute-weight/AttributeWeight";
+export { AttributeColor, AttributeSize, AttributeWeight };

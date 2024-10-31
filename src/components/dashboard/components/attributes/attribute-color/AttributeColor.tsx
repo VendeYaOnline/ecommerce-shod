@@ -29,7 +29,9 @@ const AttributeColor = ({
   const [selectedColor, setSelectedColor] = useState("#1A1A19");
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setname(e.target.value);
+    if (e.target.value.length < 10) {
+      setname(e.target.value);
+    }
   };
 
   const addColor = () => {
