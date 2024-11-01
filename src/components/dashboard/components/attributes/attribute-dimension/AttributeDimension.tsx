@@ -64,7 +64,7 @@ const AttributeDimension = ({
 
   return (
     <div>
-      <label>Valor</label>
+      <label className="text-slate-600 block mb-2">Valor</label>
       <div className="flex gap-2">
         <Input
           value={valueDimension}
