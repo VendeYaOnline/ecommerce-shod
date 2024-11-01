@@ -4,9 +4,15 @@ import Button from "../button/Button";
 import Select from "../select/Select";
 import { attributes } from "@/functions";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import Input from "../input/Input";
 import { Attribute } from "@/interfaces";
-import { AttributeColor, AttributeSize, AttributeWeight } from "../attributes";
+import Input from "../input/Input";
+import {
+  AttributeColor,
+  AttributeDimension,
+  AttributeMilliliter,
+  AttributeSize,
+  AttributeWeight,
+} from "../attributes";
 
 interface Props {
   active: boolean;
@@ -19,6 +25,8 @@ const ModalAttribute = ({ active, onClose }: Props) => {
     color: [],
     size: [],
     weight: [],
+    dimension: [],
+    mililitir: [],
   });
 
   const [isValid, setisValid] = useState(false);
@@ -36,7 +44,13 @@ const ModalAttribute = ({ active, onClose }: Props) => {
   };
 
   useEffect(() => {
-    setValueAttribute({ color: [], size: [], weight: [] });
+    setValueAttribute({
+      color: [],
+      size: [],
+      weight: [],
+      dimension: [],
+      mililitir: [],
+    });
   }, [type]);
 
   const typeAttribute = (value: string) => {
@@ -51,6 +65,16 @@ const ModalAttribute = ({ active, onClose }: Props) => {
           />
         );
 
+      case "Talla":
+        return (
+          <AttributeSize
+            attributes={valueAttribute}
+            setValueAttribute={setValueAttribute}
+            nameAttribute={nameAttribute}
+            setisValid={setisValid}
+          />
+        );
+
       case "Peso":
         return (
           <AttributeWeight
@@ -61,12 +85,22 @@ const ModalAttribute = ({ active, onClose }: Props) => {
           />
         );
 
-      case "Talla":
+      case "Dimensión":
         return (
-          <AttributeSize
+          <AttributeDimension
             attributes={valueAttribute}
-            setValueAttribute={setValueAttribute}
             nameAttribute={nameAttribute}
+            setValueAttribute={setValueAttribute}
+            setisValid={setisValid}
+          />
+        );
+
+      case "Mililitro":
+        return (
+          <AttributeMilliliter
+            attributes={valueAttribute}
+            nameAttribute={nameAttribute}
+            setValueAttribute={setValueAttribute}
             setisValid={setisValid}
           />
         );

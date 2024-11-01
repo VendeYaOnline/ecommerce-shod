@@ -1,3 +1,5 @@
+import { Attribute } from "@/interfaces";
+import classes from "./AttributeDimension.module.css";
 import {
   ChangeEvent,
   Dispatch,
@@ -6,8 +8,6 @@ import {
   useState,
 } from "react";
 import Input from "../../input/Input";
-import classes from "./AttributeWeight.module.css";
-import { Attribute } from "@/interfaces";
 import { CirclePlus, CircleX } from "lucide-react";
 
 interface Props {
@@ -17,83 +17,85 @@ interface Props {
   setisValid: Dispatch<SetStateAction<boolean>>;
 }
 
-const AttributeWeight = ({
+const AttributeDimension = ({
   attributes,
-  nameAttribute,
   setValueAttribute,
+  nameAttribute,
   setisValid,
 }: Props) => {
-  const [valueWeight, setValueWeight] = useState("");
+  const [valueDimension, setValueDimension] = useState("");
   const [error, setError] = useState(false);
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const regex = /^[a-zA-Z0-9]+$/;
     if (
-      (e.target.value.length < 20 && regex.test(e.target.value)) ||
+      (e.target.value.length < 10 && regex.test(e.target.value)) ||
       e.target.value === ""
     ) {
-      setValueWeight(e.target.value.toLocaleUpperCase());
+      setValueDimension(e.target.value.toLocaleUpperCase());
     }
   };
 
-  const addWeight = () => {
-    if (!attributes.weight.find((i) => i === valueWeight)) {
+  const addDimension = () => {
+    if (!attributes.dimension.find((i) => i === valueDimension)) {
       setValueAttribute({
         ...attributes,
-        weight: [...attributes.weight, valueWeight],
+        dimension: [...attributes.dimension, valueDimension],
       });
       setError(false);
-      setValueWeight("");
+      setValueDimension("");
     } else {
       setError(true);
     }
   };
 
-  const removeWeight = (name: string) => {
-    const newWeights = attributes.weight.filter((i) => i !== name);
-    setValueAttribute({ ...attributes, weight: newWeights });
+  const removeDimension = (name: string) => {
+    const newDimensions = attributes.dimension.filter((i) => i !== name);
+    setValueAttribute({ ...attributes, dimension: newDimensions });
   };
 
   useEffect(() => {
-    if (nameAttribute !== "" && attributes.weight.length) {
+    if (nameAttribute !== "" && attributes.dimension.length) {
       setisValid(true);
     } else {
       setisValid(false);
     }
-  }, [nameAttribute, attributes.weight]);
+  }, [nameAttribute, attributes.dimension]);
 
   return (
     <div>
       <label>Valor</label>
       <div className="flex gap-2">
         <Input
-          value={valueWeight}
+          value={valueDimension}
           onChange={onChange}
-          placeholder="5LB,10LB o 5KG,10KG..."
+          placeholder="5MM, 10CM, 15M..."
         />
         <button
           type="button"
           className={
-            valueWeight !== ""
-              ? classes["add-weight-active"]
-              : classes["add-weight"]
+            valueDimension !== ""
+              ? classes["add-dimension-active"]
+              : classes["add-dimension"]
           }
-          onClick={addWeight}
-          disabled={valueWeight !== "" ? false : true}
+          onClick={addDimension}
+          disabled={valueDimension !== "" ? false : true}
         >
           <CirclePlus />
         </button>
       </div>
-      {error && <span className="text-xs text-red-700">El peso ya existe</span>}
+      {error && (
+        <span className="text-xs text-red-700">La dimensión ya existe</span>
+      )}
       <div className="flex flex-wrap gap-2 mt-3">
-        {attributes.weight.map((item, index) => (
+        {attributes.dimension.map((item, index) => (
           <div key={index} className="burble">
             {item}
 
             <CircleX
               size={14}
               className="cursor-pointer"
-              onClick={() => removeWeight(item)}
+              onClick={() => removeDimension(item)}
             />
           </div>
         ))}
@@ -102,4 +104,4 @@ const AttributeWeight = ({
   );
 };
 
-export default AttributeWeight;
+export default AttributeDimension;

@@ -60,6 +60,7 @@ const AttributeColor = ({
       setisValid(false);
     }
   }, [nameAttribute, attributes.color]);
+
   return (
     <>
       <div>
@@ -88,7 +89,7 @@ const AttributeColor = ({
         {attributes.color.map((item, index) => (
           <div
             key={index}
-            className={classes.burble}
+            className="burble"
             style={{
               backgroundColor: item.color,
               color: getContrastingColor(item.color),

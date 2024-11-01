@@ -73,10 +73,9 @@ const AttributeSize = ({
           placeholder="S,M,XL o 32,34,40..."
         />
         <button
+          type="button"
           className={
-            valueSize !== ""
-              ? classes["add-color-active"]
-              : classes["add-color"]
+            valueSize !== "" ? classes["add-size-active"] : classes["add-size"]
           }
           onClick={addSize}
           disabled={valueSize !== "" ? false : true}
@@ -89,7 +88,7 @@ const AttributeSize = ({
       )}
       <div className="flex flex-wrap gap-2 mt-3">
         {attributes.size.map((size, index) => (
-          <div key={index} className={classes.burble}>
+          <div key={index} className="burble">
             {size}
 
             <CircleX
