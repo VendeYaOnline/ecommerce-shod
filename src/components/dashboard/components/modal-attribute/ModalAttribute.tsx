@@ -13,6 +13,9 @@ import {
   AttributeSize,
   AttributeWeight,
 } from "../attributes";
+import { useMutationAttribute } from "@/api/mutations";
+import { useQueryAttribute } from "@/api/queries";
+import toast from "react-hot-toast";
 
 interface Props {
   active: boolean;
@@ -21,6 +24,7 @@ interface Props {
 
 const ModalAttribute = ({ active, onClose }: Props) => {
   const [type, setType] = useState("");
+  const { refetch } = useQueryAttribute();
   const [valueAttribute, setValueAttribute] = useState<Attribute>({
     color: [],
     size: [],
@@ -31,16 +35,51 @@ const ModalAttribute = ({ active, onClose }: Props) => {
 
   const [isValid, setisValid] = useState(false);
   const [nameAttribute, setNameAttribute] = useState("");
+  const { mutateAsync, isPending } = useMutationAttribute();
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Nombre del atrobuto", nameAttribute);
-    console.log("Tipo del atrobuto", type);
-    console.log("Valor del atributo", valueAttribute);
+    await mutateAsync({
+      attribute_name: nameAttribute,
+      attribute_type: type,
+      value: resultValue(type),
+    });
+    refetch();
+    onClose();
+    setValueAttribute({
+      color: [],
+      size: [],
+      weight: [],
+      dimension: [],
+      mililitir: [],
+    });
+    setNameAttribute("");
+    setType("");
+    toast.success("Atributo creado");
   };
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNameAttribute(e.target.value);
+  };
+
+  const resultValue = (type: string) => {
+    switch (type) {
+      case "Color":
+        return valueAttribute.color;
+
+      case "Talla":
+        return valueAttribute.size;
+
+      case "Peso":
+        return valueAttribute.weight;
+
+      case "Dimensión":
+        return valueAttribute.dimension;
+      case "Mililitro":
+        return valueAttribute.mililitir;
+      default:
+        return [];
+    }
   };
 
   useEffect(() => {
@@ -133,7 +172,9 @@ const ModalAttribute = ({ active, onClose }: Props) => {
           />
           {typeAttribute(type)}
           <br />
-          <Button disabled={!isValid}>Crear atributo</Button>
+          <Button disabled={!isValid || isPending}>
+            {isPending ? <div className="loader" /> : "Crear atributo"}
+          </Button>
         </form>
       </section>
     )

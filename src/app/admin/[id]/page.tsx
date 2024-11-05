@@ -1,8 +1,10 @@
 "use client";
 
 import { DashBoard } from "@/components";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+const queryClient = new QueryClient();
 
 const Panel = () => {
   const { id } = useParams<{ id: string }>();
@@ -15,7 +17,13 @@ const Panel = () => {
       setShow(true);
     }
   }, [id]);
-  return show && <DashBoard />;
+  return (
+    show && (
+      <QueryClientProvider client={queryClient}>
+        <DashBoard />
+      </QueryClientProvider>
+    )
+  );
 };
 
 export default Panel;

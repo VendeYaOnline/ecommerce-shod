@@ -3,14 +3,12 @@ interface SidebarLinkProps {
   icon: React.ReactNode;
   text: string;
   active?: boolean;
-  badge?: string;
 }
 
 export function SidebarLink({
   icon,
   text,
   active,
-  badge,
   selectItem,
 }: SidebarLinkProps) {
   return (
@@ -24,11 +22,6 @@ export function SidebarLink({
     >
       {icon}
       <span>{text}</span>
-      {badge && (
-        <span className="ml-auto bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full text-xs">
-          {badge}
-        </span>
-      )}
     </span>
   );
 }

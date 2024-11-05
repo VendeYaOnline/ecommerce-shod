@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Toaster } from "react-hot-toast";
 
 const fontLight = localFont({
   src: "../fonts/Poppins-Light.ttf",
@@ -35,6 +36,7 @@ export default function RootLayout({
         className={`${fontLight.variable} ${fontRegular.variable}   ${fontSemiBold.variable} antialiased`}
       >
         <Navbar />
+        <Toaster />
         {children}
         <Footer />
       </body>
