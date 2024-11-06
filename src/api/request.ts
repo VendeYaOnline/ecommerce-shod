@@ -17,3 +17,7 @@ export const getAttributes = async () => {
 export const createAttribute = async (data: AttrbuteData) => {
   return axiosConfig.post("/create-attribute", data);
 };
+
+export const deleteAttribute = async (idElement: number) => {
+  return axiosConfig.delete(`/delete-attribute/${idElement}`);
+};

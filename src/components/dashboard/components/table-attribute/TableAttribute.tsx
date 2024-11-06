@@ -1,13 +1,16 @@
 import { useQueryAttribute } from "@/api/queries";
 import { ArrowUpDown, PenLine, Trash2 } from "lucide-react";
 import TableSkeleton from "../skeleton/Skeleton";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { ModalDeleteAttribute } from "../modals";
 
 const headers = ["Nombre del atributo", "Tipo", "Valores"];
 
 const TableAttribute = () => {
   const { data, isLoading } = useQueryAttribute();
   const [currentPage, setCurrentPage] = useState(1);
+  const [active, setActive] = useState(false);
+  const idElement = useRef(0);
   const itemsPerPage = 10;
 
   // * Lógica para obtener los elementos a mostrar en la tabla según la página actual
@@ -30,8 +33,21 @@ const TableAttribute = () => {
     }
   };
 
+  const onClose = () => {
+    setActive(false);
+  };
+
+  const onOpen = (id: number) => {
+    setActive(true);
+    idElement.current = id;
+  };
   return (
     <div className="min-h-screen bg-gray-50">
+      <ModalDeleteAttribute
+        active={active}
+        onClose={onClose}
+        idElement={idElement.current}
+      />
       <div className="mx-auto">
         <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
           <div className="p-6">
@@ -101,8 +117,17 @@ const TableAttribute = () => {
 
                       <td className="px-6 py-4 text-right">
                         <div className="flex justify-end gap-3">
-                          <PenLine size={17} />
-                          <Trash2 size={17} />
+                          <PenLine
+                            size={17}
+                            color="#3D5300"
+                            className="cursor-pointer"
+                          />
+                          <Trash2
+                            size={17}
+                            color="#FA4032"
+                            className="cursor-pointer"
+                            onClick={() => onOpen(attribute.id)}
+                          />
                         </div>
                       </td>
                     </tr>
