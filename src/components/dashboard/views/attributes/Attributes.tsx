@@ -2,10 +2,12 @@ import { PencilRuler } from "lucide-react";
 import Button from "../../components/button/Button";
 import TableAttribute from "../../components/table-attribute/TableAttribute";
 import ModalAttribute from "../../components/modal-attribute/ModalAttribute";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { AttributeUpdated } from "@/interfaces";
 
 const Attributes = () => {
   const [activeModal, setActiveModal] = useState(false);
+  const selectedItem = useRef<AttributeUpdated | undefined>(undefined);
   return (
     <section>
       <div className="mb-5">
@@ -15,9 +17,15 @@ const Attributes = () => {
       </div>
       <ModalAttribute
         active={activeModal}
-        onClose={() => setActiveModal(false)}
+        selectedItem={selectedItem}
+        onClose={() => {
+          setActiveModal(false), (selectedItem.current = undefined);
+        }}
       />
-      <TableAttribute />
+      <TableAttribute
+        selectedItem={selectedItem}
+        setActiveModal={setActiveModal}
+      />
     </section>
   );
 };

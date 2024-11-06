@@ -1,12 +1,23 @@
 import { useQueryAttribute } from "@/api/queries";
-import { ArrowUpDown, PenLine, Trash2 } from "lucide-react";
+import { PenLine, Trash2 } from "lucide-react";
 import TableSkeleton from "../skeleton/Skeleton";
-import { useRef, useState } from "react";
+import {
+  Dispatch,
+  MutableRefObject,
+  SetStateAction,
+  useRef,
+  useState,
+} from "react";
 import { ModalDeleteAttribute } from "../modals";
+import { AttributeData } from "@/interfaces";
 
 const headers = ["Nombre del atributo", "Tipo", "Valores"];
+interface Props {
+  selectedItem: MutableRefObject<AttributeData | undefined>;
+  setActiveModal: Dispatch<SetStateAction<boolean>>;
+}
 
-const TableAttribute = () => {
+const TableAttribute = ({ selectedItem, setActiveModal }: Props) => {
   const { data, isLoading } = useQueryAttribute();
   const [currentPage, setCurrentPage] = useState(1);
   const [active, setActive] = useState(false);
@@ -41,6 +52,12 @@ const TableAttribute = () => {
     setActive(true);
     idElement.current = id;
   };
+
+  const openModal = (attribute: AttributeData) => {
+    setActiveModal(true);
+    selectedItem.current = attribute;
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <ModalDeleteAttribute
@@ -63,14 +80,14 @@ const TableAttribute = () => {
                   <tr className="border-t border-gray-200 bg-gray-50/50">
                     {headers.map((header, index) => (
                       <th key={index} className="px-6 py-3 text-left">
-                        <div className="flex items-center gap-2 text-sm font-medium text-gray-500">
+                        <div className="flex items-center gap-2 font-medium text-gray-500">
                           {header}
-                          <ArrowUpDown className="h-4 w-4" />
+                          {/*   <ArrowUpDown className="h-4 w-4" /> */}
                         </div>
                       </th>
                     ))}
                     <th className="px-6 py-3 text-right">
-                      <span className="text-sm font-medium text-gray-500">
+                      <span className="font-medium text-gray-500">
                         Acciones
                       </span>
                     </th>
@@ -121,6 +138,7 @@ const TableAttribute = () => {
                             size={17}
                             color="#3D5300"
                             className="cursor-pointer"
+                            onClick={() => openModal(attribute)}
                           />
                           <Trash2
                             size={17}

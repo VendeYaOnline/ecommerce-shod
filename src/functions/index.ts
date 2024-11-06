@@ -39,6 +39,26 @@ export const list = [
   },
 ];
 
+export const nameKey = (type: string) => {
+  switch (type) {
+    case "Color":
+      return "color";
+
+    case "Talla":
+      return "size";
+
+    case "Peso":
+      return "weight";
+
+    case "Dimensión":
+      return "dimension";
+    case "Mililitro":
+      return "mililitir";
+    default:
+      return "";
+  }
+};
+
 export const getContrastingColor = (hexColor: string) => {
   // Convertir el color hex a valores RGB
   const r = parseInt(hexColor.slice(1, 3), 16);

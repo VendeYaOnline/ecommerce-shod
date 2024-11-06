@@ -2,9 +2,15 @@ import { CircleX } from "lucide-react";
 import classes from "./ModalAttribute.module.css";
 import Button from "../button/Button";
 import Select from "../select/Select";
-import { attributes } from "@/functions";
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { Attribute } from "@/interfaces";
+import { attributes, nameKey } from "@/functions";
+import {
+  ChangeEvent,
+  FormEvent,
+  MutableRefObject,
+  useEffect,
+  useState,
+} from "react";
+import { AttributeData, Attribute, AttributeUpdated } from "@/interfaces";
 import Input from "../input/Input";
 import {
   AttributeColor,
@@ -13,18 +19,28 @@ import {
   AttributeSize,
   AttributeWeight,
 } from "../attributes";
-import { useMutationAttribute } from "@/api/mutations";
+import {
+  useMutationAttribute,
+  useMutationUpdatedAttribute,
+} from "@/api/mutations";
 import { useQueryAttribute } from "@/api/queries";
 import toast from "react-hot-toast";
 
 interface Props {
   active: boolean;
+  selectedItem: MutableRefObject<AttributeUpdated | undefined>;
   onClose: () => void;
 }
 
-const ModalAttribute = ({ active, onClose }: Props) => {
+const ModalAttribute = ({ active, onClose, selectedItem }: Props) => {
   const [type, setType] = useState("");
   const { refetch } = useQueryAttribute();
+  const [isValid, setisValid] = useState(false);
+  const [nameAttribute, setNameAttribute] = useState("");
+  const { mutateAsync: mutateAsyncCreate, isPending: isPendingCreate } =
+    useMutationAttribute();
+  const { mutateAsync: mutateAsyncUpdated, isPending: isPendingUpdated } =
+    useMutationUpdatedAttribute();
   const [valueAttribute, setValueAttribute] = useState<Attribute>({
     color: [],
     size: [],
@@ -32,18 +48,20 @@ const ModalAttribute = ({ active, onClose }: Props) => {
     dimension: [],
     mililitir: [],
   });
-
-  const [isValid, setisValid] = useState(false);
-  const [nameAttribute, setNameAttribute] = useState("");
-  const { mutateAsync, isPending } = useMutationAttribute();
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await mutateAsync({
-      attribute_name: nameAttribute,
-      attribute_type: type,
-      value: resultValue(type),
-    });
+    !selectedItem.current
+      ? await mutateAsyncCreate({
+          attribute_name: nameAttribute,
+          attribute_type: type,
+          value: resultValue(type),
+        })
+      : await mutateAsyncUpdated({
+          id: selectedItem.current.id,
+          attribute_name: nameAttribute,
+          attribute_type: type,
+          value: resultValue(type),
+        });
     refetch();
     onClose();
     setValueAttribute({
@@ -61,6 +79,26 @@ const ModalAttribute = ({ active, onClose }: Props) => {
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNameAttribute(e.target.value);
   };
+
+  useEffect(() => {
+    if (selectedItem.current) {
+      setNameAttribute(selectedItem.current.attribute_name);
+      setType(selectedItem.current.attribute_type);
+      setValueAttribute({
+        ...valueAttribute,
+        [nameKey(selectedItem.current.attribute_type)]:
+          selectedItem.current.value,
+      });
+    } else {
+      setValueAttribute({
+        color: [],
+        size: [],
+        weight: [],
+        dimension: [],
+        mililitir: [],
+      });
+    }
+  }, [selectedItem.current]);
 
   const resultValue = (type: string) => {
     switch (type) {
@@ -81,16 +119,6 @@ const ModalAttribute = ({ active, onClose }: Props) => {
         return [];
     }
   };
-
-  useEffect(() => {
-    setValueAttribute({
-      color: [],
-      size: [],
-      weight: [],
-      dimension: [],
-      mililitir: [],
-    });
-  }, [type]);
 
   const typeAttribute = (value: string) => {
     switch (value) {
@@ -159,7 +187,11 @@ const ModalAttribute = ({ active, onClose }: Props) => {
                 setNameAttribute("");
               }}
             />
-            <h1 className="mb-2 font-bold text-xl">Crear un atributo</h1>
+            <h1 className="mb-2 font-bold text-xl">
+              {selectedItem.current
+                ? "Editar un atributo"
+                : "Crear un atributo"}{" "}
+            </h1>
           </div>
           <label className="text-slate-600">Nombre del atributo</label>
           <Input value={nameAttribute} onChange={onChange} />
@@ -172,8 +204,14 @@ const ModalAttribute = ({ active, onClose }: Props) => {
           />
           {typeAttribute(type)}
           <br />
-          <Button disabled={!isValid || isPending}>
-            {isPending ? <div className="loader" /> : "Crear atributo"}
+          <Button disabled={!isValid || isPendingCreate || isPendingUpdated}>
+            {isPendingCreate || isPendingUpdated ? (
+              <div className="loader" />
+            ) : selectedItem.current ? (
+              "Editar atributo"
+            ) : (
+              "Crear atributo"
+            )}
           </Button>
         </form>
       </section>

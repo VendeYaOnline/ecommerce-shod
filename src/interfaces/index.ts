@@ -6,7 +6,14 @@ export interface Attribute {
   mililitir: string[];
 }
 
-export interface AttrbuteData {
+export interface AttributeData {
+  attribute_name: string;
+  attribute_type: string;
+  value: any[];
+}
+
+export interface AttributeUpdated {
+  id: number;
   attribute_name: string;
   attribute_type: string;
   value: any[];
