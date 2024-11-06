@@ -1,18 +1,35 @@
 import { useQueryAttribute } from "@/api/queries";
-import { ArrowUpDown, MoreHorizontal, PenLine, Trash2 } from "lucide-react";
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-  status: "Active" | "Offline" | "Away";
-}
+import { ArrowUpDown, PenLine, Trash2 } from "lucide-react";
+import TableSkeleton from "../skeleton/Skeleton";
+import { useState } from "react";
 
 const headers = ["Nombre del atributo", "Tipo", "Valores"];
 
 const TableAttribute = () => {
-  const { data } = useQueryAttribute();
+  const { data, isLoading } = useQueryAttribute();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // * Lógica para obtener los elementos a mostrar en la tabla según la página actual
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = data
+    ? data.slice(indexOfFirstItem, indexOfLastItem)
+    : [];
+
+  // * Lógica para cambiar de página
+  const handleNextPage = () => {
+    if (currentPage < Math.ceil((data?.length || 0) / itemsPerPage)) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="mx-auto">
@@ -22,6 +39,7 @@ const TableAttribute = () => {
               <h2 className="text-lg font-semibold text-gray-900">Atributos</h2>
             </div>
           </div>
+
           <div className="overflow-x-auto">
             {data?.length ? (
               <table className="w-full border-collapse">
@@ -35,7 +53,6 @@ const TableAttribute = () => {
                         </div>
                       </th>
                     ))}
-
                     <th className="px-6 py-3 text-right">
                       <span className="text-sm font-medium text-gray-500">
                         Acciones
@@ -43,8 +60,9 @@ const TableAttribute = () => {
                     </th>
                   </tr>
                 </thead>
+
                 <tbody className="divide-y divide-gray-200">
-                  {data.map((attribute) => (
+                  {currentItems.map((attribute) => (
                     <tr
                       key={attribute.id}
                       className="group hover:bg-gray-50/50 transition-colors duration-200"
@@ -62,19 +80,29 @@ const TableAttribute = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 flex gap-2">
-                        {attribute.value.map((item, index) => (
-                          <div
-                            key={index}
-                            style={{ backgroundColor: item.color }}
-                            className={`rounded-full w-4 h-4`}
-                          />
-                        ))}
+                        {attribute.value.map((item: any, index) => {
+                          if (typeof item === "string") {
+                            return (
+                              <div key={index} className="burble">
+                                {item}
+                              </div>
+                            );
+                          } else {
+                            return (
+                              <div
+                                key={index}
+                                style={{ backgroundColor: item.color }}
+                                className={`rounded-full w-4 h-4`}
+                              />
+                            );
+                          }
+                        })}
                       </td>
 
                       <td className="px-6 py-4 text-right">
                         <div className="flex justify-end gap-3">
-                          <PenLine size={17}/>
-                          <Trash2 size={17}/>
+                          <PenLine size={17} />
+                          <Trash2 size={17} />
                         </div>
                       </td>
                     </tr>
@@ -87,12 +115,52 @@ const TableAttribute = () => {
               </div>
             )}
           </div>
+
           <div className="border-t border-gray-200 px-6 py-4">
+            {isLoading && <TableSkeleton />}
             <p className="text-sm text-gray-500">
-              Mostrando {data ? data.length : 0} atributos
+              Mostrando {currentItems.length} de {data ? data.length : 0}{" "}
+              atributos
             </p>
           </div>
         </div>
+
+        <nav className="flex items-center justify-center space-x-2 mt-4">
+          <button
+            className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:outline-none"
+            onClick={handlePrevPage}
+            disabled={currentPage === 1}
+          >
+            Anterior
+          </button>
+
+          {Array.from(
+            { length: Math.ceil((data?.length || 0) / itemsPerPage) },
+            (_, index) => (
+              <button
+                key={index}
+                className={`px-3 py-2 rounded-md text-sm font-medium ${
+                  currentPage === index + 1
+                    ? "text-white bg-indigo-600"
+                    : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
+                }`}
+                onClick={() => setCurrentPage(index + 1)}
+              >
+                {index + 1}
+              </button>
+            )
+          )}
+
+          <button
+            className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:outline-none"
+            onClick={handleNextPage}
+            disabled={
+              currentPage === Math.ceil((data?.length || 0) / itemsPerPage)
+            }
+          >
+            Siguiente
+          </button>
+        </nav>
       </div>
     </div>
   );
