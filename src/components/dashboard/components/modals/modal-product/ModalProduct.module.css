@@ -27,22 +27,63 @@
 }
 
 .container-image {
-  width: 200px;
-  height: 200px;
+  width: 150px;
+  height: 150px;
   border-radius: 10px;
   position: absolute;
   top: 0;
   opacity: 0;
+  cursor: pointer;
+}
+
+.container-image-products {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  position: absolute;
+  top: 0;
+  opacity: 0;
+  cursor: pointer;
 }
 
 .capa {
-  width: 200px;
-  height: 200px;
+  width: 150px;
+  height: 150px;
   background-color: rgb(241, 242, 245);
   border-radius: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.capa-2 {
+  width: 80px;
+  height: 80px;
+  background-color: rgb(241, 242, 245);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-delete-img {
+  border: none;
+  border-radius: 5px;
+  font-size: small;
+  cursor: pointer;
+  padding: 5px 7px;
+  margin-top: 10px;
+  background-color: #cc2b52;
+  color: white;
+}
+
+.icon-delete-image {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  z-index: 100;
+  color: #6c30f7;
+  cursor: pointer;
 }
 
 @keyframes fadeUp {

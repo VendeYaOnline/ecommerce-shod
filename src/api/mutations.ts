@@ -1,5 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
-import { createAttribute, deleteAttribute, updatedAttribute } from "./request";
+import {
+  createAttribute,
+  deleteAttribute,
+  updatedAttribute,
+  createProduct,
+} from "./request";
+
+// * ATRIBUTOS
 
 export const useMutationAttribute = () => {
   return useMutation({ mutationFn: createAttribute });
@@ -11,4 +18,10 @@ export const useMutationUpdatedAttribute = () => {
 
 export const useMutationDeleteAttribute = () => {
   return useMutation({ mutationFn: deleteAttribute });
+};
+
+// * PRODUCTOS
+
+export const useMutationProduct = () => {
+  return useMutation({ mutationFn: createProduct });
 };

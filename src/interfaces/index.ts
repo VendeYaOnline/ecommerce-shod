@@ -18,3 +18,7 @@ export interface AttributeUpdated {
   attribute_type: string;
   value: any[];
 }
+
+export interface AttributeFind {
+  attributes: AttributeUpdated[];
+}

@@ -1,17 +1,11 @@
-import { AttributeData, AttributeUpdated } from "@/interfaces";
+import { AttributeData, AttributeFind, AttributeUpdated } from "@/interfaces";
 import { axiosConfig } from "./config";
 
+// * ATRIBUTOS
+
 export const getAttributes = async () => {
-  return (
-    await axiosConfig.get<{
-      attributes: {
-        id: number;
-        attribute_name: string;
-        attribute_type: string;
-        value: any[];
-      }[];
-    }>("/get-attributes")
-  ).data.attributes;
+  return (await axiosConfig.get<AttributeFind>("/get-attributes")).data
+    .attributes;
 };
 
 export const createAttribute = async (data: AttributeData) => {
@@ -24,4 +18,14 @@ export const updatedAttribute = async ({ id, ...data }: AttributeUpdated) => {
 
 export const deleteAttribute = async (idElement: number) => {
   return axiosConfig.delete(`/delete-attribute/${idElement}`);
+};
+
+// * PRODUCTOS
+
+export const createProduct = async (data: any) => {
+  return axiosConfig.post("/create-product", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 };
