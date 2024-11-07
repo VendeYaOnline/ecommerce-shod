@@ -35,7 +35,10 @@ const AttributeColor = ({
   };
 
   const addColor = () => {
-    if (!attributes.color.find((i) => i.name === name)) {
+    if (
+      attributes.color.length < 10 &&
+      !attributes.color.find((i) => i.name === name)
+    ) {
       setValueAttribute({
         ...attributes,
         color: [...attributes.color, { name: name, color: selectedColor }],
@@ -85,6 +88,12 @@ const AttributeColor = ({
       {error && (
         <span className="text-xs text-red-700">El color ya existe</span>
       )}
+
+      {attributes.color.length === 10 && (
+        <span className="text-xs text-gray-600">
+          Ha alcanzado el límite máximo de valores (10)
+        </span>
+      )}
       <div className="flex flex-wrap gap-2">
         {attributes.color.map((item, index) => (
           <div
@@ -104,14 +113,19 @@ const AttributeColor = ({
           </div>
         ))}
       </div>
+
       <div>
         <button
           type="button"
           onClick={addColor}
           className={
-            name !== "" ? classes["add-color-active"] : classes["add-color"]
+            name !== "" && attributes.color.length < 10
+              ? classes["add-color-active"]
+              : classes["add-color"]
           }
-          disabled={name !== "" ? false : true}
+          disabled={
+            (name !== "" ? false : true) || attributes.color.length === 10
+          }
         >
           Agregar color
         </button>

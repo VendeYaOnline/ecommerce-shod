@@ -72,18 +72,27 @@ const AttributeMilliliter = ({
         <button
           type="button"
           className={
-            valueMililiter !== ""
+            valueMililiter !== "" && attributes.mililitir.length < 10
               ? classes["add-mililitir-active"]
               : classes["add-mililitir"]
           }
           onClick={addMililitir}
-          disabled={valueMililiter !== "" ? false : true}
+          disabled={
+            (valueMililiter !== "" ? false : true) ||
+            attributes.mililitir.length === 10
+          }
         >
           <CirclePlus />
         </button>
       </div>
       {error && (
         <span className="text-xs text-red-700">La dimensión ya existe</span>
+      )}
+
+      {attributes.mililitir.length === 10 && (
+        <span className="text-xs text-gray-600">
+          Ha alcanzado el límite máximo de valores (10)
+        </span>
       )}
 
       <div className="flex flex-wrap gap-2 mt-3">

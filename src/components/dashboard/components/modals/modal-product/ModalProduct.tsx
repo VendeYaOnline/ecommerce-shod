@@ -7,11 +7,12 @@ import { CircleX, ImageUp } from "lucide-react";
 import Input from "../../input/Input";
 import Select from "../../select/Select";
 import Textarea from "../../textarea/Textarea";
-import { FormEvent, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import { useMutationProduct } from "@/api/mutations";
 import IconDelete from "/public/icon-delete.png";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
+import { useQueryAttribute } from "@/api/queries";
 
 interface Props {
   active: boolean;
@@ -24,6 +25,7 @@ const ModalProduct = ({ active, onClose }: Props) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [productImages, setProductImages] = useState<string[]>([]);
   const { mutateAsync } = useMutationProduct();
+  const { data: attributes } = useQueryAttribute();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -57,6 +59,17 @@ const ModalProduct = ({ active, onClose }: Props) => {
     setSelectedFile(null);
     setImagePreview(null);
   };
+
+  const listAttributes = useMemo(() => {
+    if (attributes?.length) {
+      return attributes.map((attribute) => ({
+        id: attribute.id,
+        name: attribute.attribute_name,
+      }));
+    } else {
+      return [];
+    }
+  }, [attributes]);
 
   const handleUpImages = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -94,6 +107,9 @@ const ModalProduct = ({ active, onClose }: Props) => {
               className="absolute right-5 cursor-pointer"
               onClick={() => {
                 onClose();
+                setSelectedFile(null);
+                setImagePreview(null);
+                setProductImages([]);
               }}
             />
             <h1 className="mb-2 font-bold text-xl">Crear un producto</h1>
@@ -153,7 +169,7 @@ const ModalProduct = ({ active, onClose }: Props) => {
           <div className="mt-1 flex flex-col gap-1">
             <label>Atributo</label>
             <Select
-              data={list}
+              data={listAttributes}
               value={value}
               setValue={setValue}
               placeholder="Selecciona atributo"

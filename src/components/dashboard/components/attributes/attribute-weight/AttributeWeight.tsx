@@ -74,17 +74,26 @@ const AttributeWeight = ({
         <button
           type="button"
           className={
-            valueWeight !== ""
+            valueWeight !== "" && attributes.weight.length < 10
               ? classes["add-weight-active"]
               : classes["add-weight"]
           }
           onClick={addWeight}
-          disabled={valueWeight !== "" ? false : true}
+          disabled={
+            (valueWeight !== "" ? false : true) ||
+            attributes.weight.length === 10
+          }
         >
           <CirclePlus />
         </button>
       </div>
       {error && <span className="text-xs text-red-700">El peso ya existe</span>}
+
+      {attributes.weight.length === 10 && (
+        <span className="text-xs text-gray-600">
+          Ha alcanzado el límite máximo de valores (10)
+        </span>
+      )}
       <div className="flex flex-wrap gap-2 mt-3">
         {attributes.weight.map((item, index) => (
           <div key={index} className="burble">

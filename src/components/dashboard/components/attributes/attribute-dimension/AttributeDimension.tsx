@@ -74,18 +74,26 @@ const AttributeDimension = ({
         <button
           type="button"
           className={
-            valueDimension !== ""
+            valueDimension !== "" && attributes.dimension.length < 10
               ? classes["add-dimension-active"]
               : classes["add-dimension"]
           }
           onClick={addDimension}
-          disabled={valueDimension !== "" ? false : true}
+          disabled={
+            (valueDimension !== "" ? false : true) ||
+            attributes.dimension.length === 10
+          }
         >
           <CirclePlus />
         </button>
       </div>
       {error && (
         <span className="text-xs text-red-700">La dimensión ya existe</span>
+      )}
+      {attributes.dimension.length === 10 && (
+        <span className="text-xs text-gray-600">
+          Ha alcanzado el límite máximo de valores (10)
+        </span>
       )}
       <div className="flex flex-wrap gap-2 mt-3">
         {attributes.dimension.map((item, index) => (

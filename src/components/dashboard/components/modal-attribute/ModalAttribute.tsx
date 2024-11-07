@@ -10,7 +10,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { AttributeData, Attribute, AttributeUpdated } from "@/interfaces";
+import { Attribute, AttributeUpdated } from "@/interfaces";
 import Input from "../input/Input";
 import {
   AttributeColor,
@@ -34,7 +34,7 @@ interface Props {
 
 const ModalAttribute = ({ active, onClose, selectedItem }: Props) => {
   const [type, setType] = useState("");
-  const { refetch } = useQueryAttribute();
+  const { data, refetch } = useQueryAttribute();
   const [isValid, setisValid] = useState(false);
   const [nameAttribute, setNameAttribute] = useState("");
   const { mutateAsync: mutateAsyncCreate, isPending: isPendingCreate } =
@@ -50,30 +50,35 @@ const ModalAttribute = ({ active, onClose, selectedItem }: Props) => {
   });
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    !selectedItem.current
-      ? await mutateAsyncCreate({
-          attribute_name: nameAttribute,
-          attribute_type: type,
-          value: resultValue(type),
-        })
-      : await mutateAsyncUpdated({
-          id: selectedItem.current.id,
-          attribute_name: nameAttribute,
-          attribute_type: type,
-          value: resultValue(type),
-        });
-    refetch();
-    onClose();
-    setValueAttribute({
-      color: [],
-      size: [],
-      weight: [],
-      dimension: [],
-      mililitir: [],
-    });
-    setNameAttribute("");
-    setType("");
-    toast.success("Atributo creado");
+
+    if (data?.some((i) => i.attribute_name === nameAttribute)) {
+      toast.error("Ya existe un atributo con ese nombre");
+    } else {
+      !selectedItem.current
+        ? await mutateAsyncCreate({
+            attribute_name: nameAttribute,
+            attribute_type: type,
+            value: resultValue(type),
+          })
+        : await mutateAsyncUpdated({
+            id: selectedItem.current.id,
+            attribute_name: nameAttribute,
+            attribute_type: type,
+            value: resultValue(type),
+          });
+      refetch();
+      onClose();
+      setValueAttribute({
+        color: [],
+        size: [],
+        weight: [],
+        dimension: [],
+        mililitir: [],
+      });
+      setNameAttribute("");
+      setType("");
+      toast.success("Atributo creado");
+    }
   };
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {

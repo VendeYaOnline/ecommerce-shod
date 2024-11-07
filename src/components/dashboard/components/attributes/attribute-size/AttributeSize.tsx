@@ -75,16 +75,25 @@ const AttributeSize = ({
         <button
           type="button"
           className={
-            valueSize !== "" ? classes["add-size-active"] : classes["add-size"]
+            valueSize !== "" && attributes.size.length < 10
+              ? classes["add-size-active"]
+              : classes["add-size"]
           }
           onClick={addSize}
-          disabled={valueSize !== "" ? false : true}
+          disabled={
+            (valueSize !== "" ? false : true) || attributes.size.length === 10
+          }
         >
           <CirclePlus />
         </button>
       </div>
       {error && (
         <span className="text-xs text-red-700">La talla ya existe</span>
+      )}
+      {attributes.size.length === 10 && (
+        <span className="text-xs text-gray-600">
+          Ha alcanzado el límite máximo de valores (10)
+        </span>
       )}
       <div className="flex flex-wrap gap-2 mt-3">
         {attributes.size.map((size, index) => (
