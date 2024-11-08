@@ -1,6 +1,5 @@
 "use client";
 
-import { list } from "@/functions";
 import Button from "../../button/Button";
 import classes from "./ModalProduct.module.css";
 import { CircleX, ImageUp } from "lucide-react";
@@ -58,7 +57,6 @@ const ModalProduct = ({ active, onClose }: Props) => {
           return;
         } else {
           setSelectedFile(file);
-
           const imageUrl = URL.createObjectURL(file);
           setImagePreview(imageUrl);
           toast.success("Imagen cargada correctamente");
@@ -100,6 +98,7 @@ const ModalProduct = ({ active, onClose }: Props) => {
       if (event.target.files && event.target.files.length > 0) {
         const file = event.target.files[0];
         const allowedExtensions = ["image/png", "image/jpeg", "image/webp"];
+
         if (!allowedExtensions.includes(file.type)) {
           toast.error(
             "Solo se pueden subir imágenes en formato PNG, JPG o WEBP"
@@ -107,11 +106,8 @@ const ModalProduct = ({ active, onClose }: Props) => {
         } else {
           setSelectedFile(file);
           const imageUrl = URL.createObjectURL(file);
-          if (productImages.includes(imageUrl)) {
-            return;
-          } else {
-            setProductImages((prev) => [...prev, imageUrl]);
-          }
+          setProductImages((prev) => [...prev, imageUrl]);
+          event.target.value = "";
         }
       }
     },
@@ -169,6 +165,7 @@ const ModalProduct = ({ active, onClose }: Props) => {
                   </div>
                   <input
                     type="file"
+                    value={undefined}
                     className={classes["container-image"]}
                     onChange={handleFileChange}
                   />
