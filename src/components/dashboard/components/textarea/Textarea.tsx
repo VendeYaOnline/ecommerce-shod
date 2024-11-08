@@ -1,7 +1,15 @@
-import classes from "./Textarea.module.css"
+import { ChangeEvent } from "react";
+import classes from "./Textarea.module.css";
 
-const Textarea = () => {
-  return <textarea className={classes.textarea}/>
+interface Props {
+  value: string;
+  onChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+}
+
+const Textarea = ({ value, onChange }: Props) => {
+  return (
+    <textarea value={value} onChange={onChange} className={classes.textarea} />
+  );
 };
 
 export default Textarea;

@@ -23,6 +23,12 @@ interface Props {
 const ModalProduct = ({ active, onClose }: Props) => {
   const [selectedAttribute, setSelectedAttribute] = useState("");
   const [values, setValues] = useState({ valueString: "", valueObject: "" });
+  const [valuesForm, setValuesForm] = useState({
+    title: "",
+    price: "",
+    discount: "",
+    description: "",
+  });
   const [valuesAttributes, setValuesAttributes] = useState<ValuesAttributes>({
     valueString: [],
     valueObject: [],
@@ -34,11 +40,41 @@ const ModalProduct = ({ active, onClose }: Props) => {
   const { mutateAsync } = useMutationProduct();
   const { data: attributes } = useQueryAttribute();
 
+  const validAttribute = () => {
+    if (selectedAttribute !== "") {
+      if (
+        valuesAttributes.valueString.length ||
+        valuesAttributes.valueObject.length
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return true;
+    }
+  };
+
+  const isValid = () => {
+    if (
+      validAttribute() &&
+      selectedFile &&
+      valuesForm.title &&
+      valuesForm.price &&
+      valuesForm.discount &&
+      valuesForm.description
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (selectedFile) {
+    if (isValid()) {
       const formData = new FormData();
-      formData.append("file", selectedFile);
+      formData.append("file", selectedFile!);
       await mutateAsync(formData);
     }
   };
@@ -175,17 +211,38 @@ const ModalProduct = ({ active, onClose }: Props) => {
               <section className="flex flex-col gap-3 ml-3">
                 <div className="flex flex-col gap-1">
                   <label htmlFor="title">Titulo</label>
-                  <Input type="string" />
+                  <Input
+                    type="string"
+                    value={valuesForm.title}
+                    onChange={(e) =>
+                      setValuesForm({ ...valuesForm, title: e.target.value })
+                    }
+                  />
                 </div>
 
                 <div className="flex gap-3">
                   <div className="flex flex-col gap-1">
                     <label htmlFor="title">Precio</label>
-                    <Input type="number" />
+                    <Input
+                      type="number"
+                      value={valuesForm.price}
+                      onChange={(e) =>
+                        setValuesForm({ ...valuesForm, price: e.target.value })
+                      }
+                    />
                   </div>
                   <div className="flex flex-col gap-1">
                     <label htmlFor="title">Descuento</label>
-                    <Input type="number" />
+                    <Input
+                      type="number"
+                      value={valuesForm.discount}
+                      onChange={(e) =>
+                        setValuesForm({
+                          ...valuesForm,
+                          discount: e.target.value,
+                        })
+                      }
+                    />
                   </div>
                 </div>
               </section>
@@ -198,7 +255,7 @@ const ModalProduct = ({ active, onClose }: Props) => {
               data={listAttributes}
               value={selectedAttribute}
               setValue={setSelectedAttribute}
-              placeholder="Selecciona atributo"
+              placeholder="Selecciona un atributo"
             />
           </div>
 
@@ -218,7 +275,12 @@ const ModalProduct = ({ active, onClose }: Props) => {
 
           <div className="mt-1 flex flex-col gap-1">
             <label>Descripcion</label>
-            <Textarea />
+            <Textarea
+              value={valuesForm.description}
+              onChange={(e) =>
+                setValuesForm({ ...valuesForm, description: e.target.value })
+              }
+            />
           </div>
 
           <h2>{`Imagenes del producto ${productImages.length}/5`}</h2>
@@ -263,7 +325,7 @@ const ModalProduct = ({ active, onClose }: Props) => {
             )}
           </section>
           <br />
-          <Button>Guardar producto</Button>
+          <Button disabled={isValid()}>Guardar producto</Button>
         </form>
       </section>
     )
