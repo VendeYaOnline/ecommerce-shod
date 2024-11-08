@@ -7,12 +7,14 @@ import { CircleX, ImageUp } from "lucide-react";
 import Input from "../../input/Input";
 import Select from "../../select/Select";
 import Textarea from "../../textarea/Textarea";
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { useMutationProduct } from "@/api/mutations";
 import IconDelete from "/public/icon-delete.png";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
 import { useQueryAttribute } from "@/api/queries";
+import SelectAttribute from "../../select-attribute/SelectAttribute";
+import { AttributeValues, ValuesAttributes } from "@/interfaces";
 
 interface Props {
   active: boolean;
@@ -20,7 +22,13 @@ interface Props {
 }
 
 const ModalProduct = ({ active, onClose }: Props) => {
-  const [value, setValue] = useState("");
+  const [selectedAttribute, setSelectedAttribute] = useState("");
+  const [values, setValues] = useState({ valueString: "", valueObject: "" });
+  const [valuesAttributes, setValuesAttributes] = useState<ValuesAttributes>({
+    valueString: [],
+    valueObject: [],
+  });
+  const [attributeValue, setAttributeValue] = useState<AttributeValues>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [productImages, setProductImages] = useState<string[]>([]);
@@ -36,29 +44,34 @@ const ModalProduct = ({ active, onClose }: Props) => {
     }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      const file = event.target.files[0];
+  const handleFileChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (event.target.files && event.target.files.length > 0) {
+        const file = event.target.files[0];
 
-      // Validar extensión de archivo
-      const allowedExtensions = ["image/png", "image/jpeg", "image/webp"];
-      if (!allowedExtensions.includes(file.type)) {
-        toast.error("Solo se pueden subir imágenes en formato PNG, JPG o WEBP");
-        return;
-      } else {
-        setSelectedFile(file);
+        // Validar extensión de archivo
+        const allowedExtensions = ["image/png", "image/jpeg", "image/webp"];
+        if (!allowedExtensions.includes(file.type)) {
+          toast.error(
+            "Solo se pueden subir imágenes en formato PNG, JPG o WEBP"
+          );
+          return;
+        } else {
+          setSelectedFile(file);
 
-        const imageUrl = URL.createObjectURL(file);
-        setImagePreview(imageUrl);
-        toast.success("Imagen cargada correctamente");
+          const imageUrl = URL.createObjectURL(file);
+          setImagePreview(imageUrl);
+          toast.success("Imagen cargada correctamente");
+        }
       }
-    }
-  };
+    },
+    []
+  );
 
-  const deleteImage = () => {
+  const deleteImage = useCallback(() => {
     setSelectedFile(null);
     setImagePreview(null);
-  };
+  }, []);
 
   const listAttributes = useMemo(() => {
     if (attributes?.length) {
@@ -71,28 +84,44 @@ const ModalProduct = ({ active, onClose }: Props) => {
     }
   }, [attributes]);
 
-  const handleUpImages = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      const file = event.target.files[0];
-      const allowedExtensions = ["image/png", "image/jpeg", "image/webp"];
-      if (!allowedExtensions.includes(file.type)) {
-        toast.error("Solo se pueden subir imágenes en formato PNG, JPG o WEBP");
-      } else {
-        setSelectedFile(file);
-        const imageUrl = URL.createObjectURL(file);
-        if (productImages.includes(imageUrl)) {
-          return;
+  useEffect(() => {
+    if (attributes?.length) {
+      const values = attributes
+        ?.filter((i) => i.attribute_name === selectedAttribute)
+        .map((e) => e.value);
+      setAttributeValue(values[0]);
+    }
+    setValuesAttributes({ valueString: [], valueObject: [] });
+    setValues({ valueString: "", valueObject: "" });
+  }, [selectedAttribute, attributes]);
+
+  const handleUpImages = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (event.target.files && event.target.files.length > 0) {
+        const file = event.target.files[0];
+        const allowedExtensions = ["image/png", "image/jpeg", "image/webp"];
+        if (!allowedExtensions.includes(file.type)) {
+          toast.error(
+            "Solo se pueden subir imágenes en formato PNG, JPG o WEBP"
+          );
         } else {
-          setProductImages((prev) => [...prev, imageUrl]);
+          setSelectedFile(file);
+          const imageUrl = URL.createObjectURL(file);
+          if (productImages.includes(imageUrl)) {
+            return;
+          } else {
+            setProductImages((prev) => [...prev, imageUrl]);
+          }
         }
       }
-    }
-  };
+    },
+    [productImages]
+  );
 
-  const deleteImageProduct = (image: string) => {
+  const deleteImageProduct = useCallback((image: string) => {
     const images = productImages.filter((i) => i !== image);
     setProductImages(images);
-  };
+  }, []);
 
   return (
     active && (
@@ -170,11 +199,25 @@ const ModalProduct = ({ active, onClose }: Props) => {
             <label>Atributo</label>
             <Select
               data={listAttributes}
-              value={value}
-              setValue={setValue}
+              value={selectedAttribute}
+              setValue={setSelectedAttribute}
               placeholder="Selecciona atributo"
             />
           </div>
+
+          {selectedAttribute && attributeValue?.length && (
+            <div className="mt-1 flex flex-col gap-1">
+              <label>Valores</label>
+              <SelectAttribute
+                values={values}
+                setValues={setValues}
+                attributeValue={attributeValue}
+                valuesAttributes={valuesAttributes}
+                setValuesAttributes={setValuesAttributes}
+                placeholder="Selecciona un valor"
+              />
+            </div>
+          )}
 
           <div className="mt-1 flex flex-col gap-1">
             <label>Descripcion</label>

@@ -98,7 +98,7 @@ const AttributeColor = ({
         {attributes.color.map((item, index) => (
           <div
             key={index}
-            className="burble"
+            className="rounded-lg py-1 px-3 text-sm"
             style={{
               backgroundColor: item.color,
               color: getContrastingColor(item.color),

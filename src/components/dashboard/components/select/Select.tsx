@@ -14,9 +14,14 @@ interface Props {
 const Select = ({ data = [], value, setValue, placeholder }: Props) => {
   const [activeSelect, setActiveSelect] = useState(false);
 
-  const onClose = (value: string) => {
-    setActiveSelect(false);
-    setValue(value);
+  const onClose = (newValue: string) => {
+    if (newValue === value) {
+      setActiveSelect(false);
+      setValue("");
+    } else {
+      setActiveSelect(false);
+      setValue(newValue);
+    }
   };
 
   const onChange = () => {

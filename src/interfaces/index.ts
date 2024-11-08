@@ -12,13 +12,23 @@ export interface AttributeData {
   value: any[];
 }
 
+export type AttributeValues = string[] | { name: string; value: string }[];
+
 export interface AttributeUpdated {
   id: number;
   attribute_name: string;
   attribute_type: string;
-  value: any[];
+  value: AttributeValues;
 }
 
 export interface AttributeFind {
   attributes: AttributeUpdated[];
+}
+
+export interface ValuesAttributes {
+  valueString: string[];
+  valueObject: {
+    name: string;
+    color: string;
+  }[];
 }
