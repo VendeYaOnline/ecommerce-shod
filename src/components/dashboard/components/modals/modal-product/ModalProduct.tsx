@@ -6,7 +6,14 @@ import { CircleX, ImageUp } from "lucide-react";
 import Input from "../../input/Input";
 import Select from "../../select/Select";
 import Textarea from "../../textarea/Textarea";
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  FormEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useMutationProduct } from "@/api/mutations";
 import IconDelete from "/public/icon-delete.png";
 import Image from "next/image";
@@ -22,6 +29,7 @@ interface Props {
 
 const ModalProduct = ({ active, onClose }: Props) => {
   const [selectedAttribute, setSelectedAttribute] = useState("");
+  const imagesProducts = useRef<File[]>([]);
   const [values, setValues] = useState({ valueString: "", valueObject: "" });
   const [valuesForm, setValuesForm] = useState({
     title: "",
@@ -37,8 +45,19 @@ const ModalProduct = ({ active, onClose }: Props) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [productImages, setProductImages] = useState<string[]>([]);
-  const { mutateAsync } = useMutationProduct();
+  const { mutateAsync, isPending } = useMutationProduct();
   const { data: attributes } = useQueryAttribute();
+
+  useEffect(() => {
+    if (attributes?.length) {
+      const values = attributes
+        ?.filter((i) => i.attribute_name === selectedAttribute)
+        .map((e) => e.value);
+      setAttributeValue(values[0]);
+    }
+    setValuesAttributes({ valueString: [], valueObject: [] });
+    setValues({ valueString: "", valueObject: "" });
+  }, [selectedAttribute, attributes]);
 
   const validAttribute = () => {
     if (selectedAttribute !== "") {
@@ -70,14 +89,59 @@ const ModalProduct = ({ active, onClose }: Props) => {
     }
   };
 
+  const cleanField = useCallback(() => {
+    setValuesForm({ title: "", price: "", discount: "", description: "" });
+    setValuesAttributes({ valueString: [], valueObject: [] });
+    setSelectedAttribute("");
+    setValues({ valueString: "", valueObject: "" });
+    imagesProducts.current = [];
+    setAttributeValue([]);
+    setSelectedFile(null);
+    setImagePreview(null);
+    setProductImages([]);
+  }, []);
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (isValid()) {
+    if (!isValid()) {
       const formData = new FormData();
       formData.append("file", selectedFile!);
+      imagesProducts.current.forEach((file) => {
+        formData.append("images", file);
+      });
+      formData.append(
+        "attributes",
+        valuesAttributes.valueString.length
+          ? JSON.stringify(valuesAttributes.valueString)
+          : JSON.stringify(valuesAttributes.valueObject)
+      );
+      // Agrega el resto de los valores del formulario
+      Object.entries(valuesForm).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+
       await mutateAsync(formData);
+      toast.success("Producto creado");
+      cleanField();
+      onClose();
     }
   };
+
+  const deleteImage = useCallback(() => {
+    setSelectedFile(null);
+    setImagePreview(null);
+  }, []);
+
+  const listAttributes = useMemo(() => {
+    if (attributes?.length) {
+      return attributes.map((attribute) => ({
+        id: attribute.id,
+        name: attribute.attribute_name,
+      }));
+    } else {
+      return [];
+    }
+  }, [attributes]);
 
   const handleFileChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -102,45 +166,20 @@ const ModalProduct = ({ active, onClose }: Props) => {
     []
   );
 
-  const deleteImage = useCallback(() => {
-    setSelectedFile(null);
-    setImagePreview(null);
-  }, []);
-
-  const listAttributes = useMemo(() => {
-    if (attributes?.length) {
-      return attributes.map((attribute) => ({
-        id: attribute.id,
-        name: attribute.attribute_name,
-      }));
-    } else {
-      return [];
-    }
-  }, [attributes]);
-
-  useEffect(() => {
-    if (attributes?.length) {
-      const values = attributes
-        ?.filter((i) => i.attribute_name === selectedAttribute)
-        .map((e) => e.value);
-      setAttributeValue(values[0]);
-    }
-    setValuesAttributes({ valueString: [], valueObject: [] });
-    setValues({ valueString: "", valueObject: "" });
-  }, [selectedAttribute, attributes]);
-
   const handleUpImages = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       if (event.target.files && event.target.files.length > 0) {
         const file = event.target.files[0];
-        const allowedExtensions = ["image/png", "image/jpeg", "image/webp"];
 
+        // Validar extensión de archivo
+        const allowedExtensions = ["image/png", "image/jpeg", "image/webp"];
         if (!allowedExtensions.includes(file.type)) {
           toast.error(
             "Solo se pueden subir imágenes en formato PNG, JPG o WEBP"
           );
+          return;
         } else {
-          setSelectedFile(file);
+          imagesProducts.current = [...imagesProducts.current, file];
           const imageUrl = URL.createObjectURL(file);
           setProductImages((prev) => [...prev, imageUrl]);
           event.target.value = "";
@@ -168,9 +207,7 @@ const ModalProduct = ({ active, onClose }: Props) => {
               className="absolute right-5 cursor-pointer"
               onClick={() => {
                 onClose();
-                setSelectedFile(null);
-                setImagePreview(null);
-                setProductImages([]);
+                cleanField();
               }}
             />
             <h1 className="mb-2 font-bold text-xl">Crear un producto</h1>
@@ -325,7 +362,9 @@ const ModalProduct = ({ active, onClose }: Props) => {
             )}
           </section>
           <br />
-          <Button disabled={isValid()}>Guardar producto</Button>
+          <Button disabled={isValid() || isPending}>
+            {isPending ? <div className="loader" /> : "Guardar producto"}{" "}
+          </Button>
         </form>
       </section>
     )

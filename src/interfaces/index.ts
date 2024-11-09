@@ -32,3 +32,13 @@ export interface ValuesAttributes {
     color: string;
   }[];
 }
+
+export interface Product {
+  title: string;
+  price: string;
+  discount: string;
+  description: string;
+  image_product: FormData;
+  images: string[];
+  attributes: string[];
+}

@@ -1,4 +1,9 @@
-import { AttributeData, AttributeFind, AttributeUpdated } from "@/interfaces";
+import {
+  AttributeData,
+  AttributeFind,
+  AttributeUpdated,
+  Product,
+} from "@/interfaces";
 import { axiosConfig } from "./config";
 
 // * ATRIBUTOS
@@ -22,7 +27,7 @@ export const deleteAttribute = async (idElement: number) => {
 
 // * PRODUCTOS
 
-export const createProduct = async (data: any) => {
+export const createProduct = async (data: FormData) => {
   return axiosConfig.post("/create-product", data, {
     headers: {
       "Content-Type": "multipart/form-data",
