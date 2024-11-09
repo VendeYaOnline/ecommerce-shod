@@ -159,7 +159,6 @@ const ModalProduct = ({ active, onClose }: Props) => {
           setSelectedFile(file);
           const imageUrl = URL.createObjectURL(file);
           setImagePreview(imageUrl);
-          toast.success("Imagen cargada correctamente");
         }
       }
     },
