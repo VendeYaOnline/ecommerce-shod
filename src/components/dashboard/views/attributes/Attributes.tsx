@@ -1,9 +1,9 @@
 import { PencilRuler } from "lucide-react";
 import Button from "../../components/button/Button";
-import TableAttribute from "../../components/table-attribute/TableAttribute";
 import ModalAttribute from "../../components/modal-attribute/ModalAttribute";
 import { useRef, useState } from "react";
 import { AttributeUpdated } from "@/interfaces";
+import { TableAttribute } from "../../components/tables";
 
 const Attributes = () => {
   const [activeModal, setActiveModal] = useState(false);

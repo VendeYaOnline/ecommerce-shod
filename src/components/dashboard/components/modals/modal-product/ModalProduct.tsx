@@ -18,9 +18,10 @@ import { useMutationProduct } from "@/api/mutations";
 import IconDelete from "/public/icon-delete.png";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
-import { useQueryAttribute } from "@/api/queries";
+import { useQueryAttribute, useQueryProducts } from "@/api/queries";
 import SelectAttribute from "../../select-attribute/SelectAttribute";
 import { AttributeValues, ValuesAttributes } from "@/interfaces";
+import { convertPrice } from "@/functions";
 
 interface Props {
   active: boolean;
@@ -30,11 +31,12 @@ interface Props {
 const ModalProduct = ({ active, onClose }: Props) => {
   const [selectedAttribute, setSelectedAttribute] = useState("");
   const imagesProducts = useRef<File[]>([]);
+  const { refetch } = useQueryProducts(1);
   const [values, setValues] = useState({ valueString: "", valueObject: "" });
   const [valuesForm, setValuesForm] = useState({
     title: "",
     price: "",
-    discount: "",
+    discount: "0",
     description: "",
   });
   const [valuesAttributes, setValuesAttributes] = useState<ValuesAttributes>({
@@ -122,6 +124,7 @@ const ModalProduct = ({ active, onClose }: Props) => {
 
       await mutateAsync(formData);
       toast.success("Producto creado");
+      refetch();
       cleanField();
       onClose();
     }
@@ -260,24 +263,33 @@ const ModalProduct = ({ active, onClose }: Props) => {
                   <div className="flex flex-col gap-1">
                     <label htmlFor="title">Precio</label>
                     <Input
-                      type="number"
+                      type="string"
                       value={valuesForm.price}
+                      placeholder="$"
                       onChange={(e) =>
-                        setValuesForm({ ...valuesForm, price: e.target.value })
+                        setValuesForm({
+                          ...valuesForm,
+                          price: convertPrice(e.target.value),
+                        })
                       }
                     />
                   </div>
                   <div className="flex flex-col gap-1">
                     <label htmlFor="title">Descuento</label>
                     <Input
-                      type="number"
+                      type="string"
                       value={valuesForm.discount}
-                      onChange={(e) =>
+                      placeholder="0"
+                      onChange={(e) => {
+                        const value = Math.max(
+                          0,
+                          Math.min(100, Number(e.target.value) || 0)
+                        );
                         setValuesForm({
                           ...valuesForm,
-                          discount: e.target.value,
-                        })
-                      }
+                          discount: value + "",
+                        });
+                      }}
                     />
                   </div>
                 </div>

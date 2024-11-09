@@ -2,7 +2,7 @@ import {
   AttributeData,
   AttributeFind,
   AttributeUpdated,
-  Product,
+  ProductFind,
 } from "@/interfaces";
 import { axiosConfig } from "./config";
 
@@ -26,6 +26,11 @@ export const deleteAttribute = async (idElement: number) => {
 };
 
 // * PRODUCTOS
+
+export const getProducts = async (page: number) => {
+  return (await axiosConfig.get<ProductFind>(`/get-products?page=${page}`))
+    .data;
+};
 
 export const createProduct = async (data: FormData) => {
   return axiosConfig.post("/create-product", data, {

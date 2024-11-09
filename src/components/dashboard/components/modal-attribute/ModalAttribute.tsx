@@ -10,7 +10,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { Attribute, AttributeUpdated } from "@/interfaces";
+import { Attribute, AttributeUpdated, AttributeValues } from "@/interfaces";
 import Input from "../input/Input";
 import {
   AttributeColor,
@@ -64,7 +64,7 @@ const ModalAttribute = ({ active, onClose, selectedItem }: Props) => {
             id: selectedItem.current.id,
             attribute_name: nameAttribute,
             attribute_type: type,
-            value: resultValue(type),
+            value: resultValue(type) as AttributeValues,
           });
       refetch();
       onClose();

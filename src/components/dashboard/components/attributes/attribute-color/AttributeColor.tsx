@@ -98,7 +98,7 @@ const AttributeColor = ({
         {attributes.color.map((item, index) => (
           <div
             key={index}
-            className="rounded-lg py-1 px-3 text-sm"
+            className="rounded-lg py-1 px-2 text-sm flex items-center gap-2"
             style={{
               backgroundColor: item.color,
               color: getContrastingColor(item.color),

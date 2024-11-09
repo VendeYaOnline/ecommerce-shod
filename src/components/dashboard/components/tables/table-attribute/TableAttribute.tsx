@@ -1,6 +1,5 @@
 import { useQueryAttribute } from "@/api/queries";
 import { PenLine, Trash2 } from "lucide-react";
-import TableSkeleton from "../skeleton/Skeleton";
 import {
   Dispatch,
   MutableRefObject,
@@ -8,8 +7,9 @@ import {
   useRef,
   useState,
 } from "react";
-import { ModalDeleteAttribute } from "../modals";
 import { AttributeData } from "@/interfaces";
+import TableSkeleton from "../../skeleton/Skeleton";
+import { ModalDeleteAttribute } from "../../modals";
 
 const headers = ["Nombre del atributo", "Tipo", "Valores"];
 interface Props {

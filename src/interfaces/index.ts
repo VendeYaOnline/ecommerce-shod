@@ -21,8 +21,26 @@ export interface AttributeUpdated {
   value: AttributeValues;
 }
 
+export interface ProductsResponse {
+  id: number;
+  image_product: string;
+  title: string;
+  price: string;
+  attributes: string;
+  description: string;
+  discount: number;
+  images: string[];
+}
+
 export interface AttributeFind {
   attributes: AttributeUpdated[];
+}
+
+export interface ProductFind {
+  products: ProductsResponse[];
+  total: number;
+  page: number;
+  totalPages: number;
 }
 
 export interface ValuesAttributes {
