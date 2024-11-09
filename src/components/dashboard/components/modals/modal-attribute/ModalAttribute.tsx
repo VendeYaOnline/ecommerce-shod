@@ -1,7 +1,5 @@
 import { CircleX } from "lucide-react";
 import classes from "./ModalAttribute.module.css";
-import Button from "../button/Button";
-import Select from "../select/Select";
 import { attributes, nameKey } from "@/functions";
 import {
   ChangeEvent,
@@ -11,20 +9,22 @@ import {
   useState,
 } from "react";
 import { Attribute, AttributeUpdated, AttributeValues } from "@/interfaces";
-import Input from "../input/Input";
 import {
   AttributeColor,
   AttributeDimension,
   AttributeMilliliter,
   AttributeSize,
   AttributeWeight,
-} from "../attributes";
+} from "../../attributes";
 import {
   useMutationAttribute,
   useMutationUpdatedAttribute,
 } from "@/api/mutations";
 import { useQueryAttribute } from "@/api/queries";
 import toast from "react-hot-toast";
+import Input from "../../input/Input";
+import Select from "../../select/Select";
+import Button from "../../button/Button";
 
 interface Props {
   active: boolean;
