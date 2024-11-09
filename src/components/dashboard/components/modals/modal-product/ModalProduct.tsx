@@ -48,7 +48,8 @@ const ModalProduct = ({ active, onClose }: Props) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [productImages, setProductImages] = useState<string[]>([]);
   const { mutateAsync, isPending } = useMutationProduct();
-  const { data } = useQueryAttribute(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const { data } = useQueryAttribute(currentPage);
 
   useEffect(() => {
     if (data?.attributes?.length) {
@@ -298,6 +299,23 @@ const ModalProduct = ({ active, onClose }: Props) => {
               </section>
             </div>
           </div>
+          {data && data.totalPages > 1 && (
+            <nav className="flex items-center space-x-2">
+              {Array.from({ length: data?.totalPages || 0 }, (_, index) => (
+                <button
+                  key={index}
+                  className={`w-5 h-5 rounded-md text-xs font-medium ${
+                    currentPage === index + 1
+                      ? "text-white bg-indigo-600"
+                      : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
+                  }`}
+                  onClick={() => setCurrentPage(index + 1)}
+                >
+                  {index + 1}
+                </button>
+              ))}
+            </nav>
+          )}
 
           <div className="mt-1 flex flex-col gap-1">
             <label>Atributo</label>

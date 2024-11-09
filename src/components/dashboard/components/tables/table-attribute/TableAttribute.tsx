@@ -22,7 +22,6 @@ const TableAttribute = ({ selectedItem, setActiveModal }: Props) => {
   const { data, isLoading } = useQueryAttribute(currentPage);
   const [active, setActive] = useState(false);
   const idElement = useRef(0);
-  const itemsPerPage = 10;
 
   // * Lógica para cambiar de página
   const handleNextPage = () => {
