@@ -48,18 +48,18 @@ const ModalProduct = ({ active, onClose }: Props) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [productImages, setProductImages] = useState<string[]>([]);
   const { mutateAsync, isPending } = useMutationProduct();
-  const { data: attributes } = useQueryAttribute();
+  const { data } = useQueryAttribute(1);
 
   useEffect(() => {
-    if (attributes?.length) {
-      const values = attributes
+    if (data?.attributes?.length) {
+      const values = data.attributes
         ?.filter((i) => i.attribute_name === selectedAttribute)
         .map((e) => e.value);
       setAttributeValue(values[0]);
     }
     setValuesAttributes({ valueString: [], valueObject: [] });
     setValues({ valueString: "", valueObject: "" });
-  }, [selectedAttribute, attributes]);
+  }, [selectedAttribute, data?.attributes]);
 
   const validAttribute = () => {
     if (selectedAttribute !== "") {
@@ -136,15 +136,15 @@ const ModalProduct = ({ active, onClose }: Props) => {
   }, []);
 
   const listAttributes = useMemo(() => {
-    if (attributes?.length) {
-      return attributes.map((attribute) => ({
+    if (data?.attributes?.length) {
+      return data.attributes.map((attribute) => ({
         id: attribute.id,
         name: attribute.attribute_name,
       }));
     } else {
       return [];
     }
-  }, [attributes]);
+  }, [data?.attributes]);
 
   const handleFileChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -253,9 +253,11 @@ const ModalProduct = ({ active, onClose }: Props) => {
                   <Input
                     type="string"
                     value={valuesForm.title}
-                    onChange={(e) =>
-                      setValuesForm({ ...valuesForm, title: e.target.value })
-                    }
+                    onChange={(e) => {
+                      if (e.target.value.length < 30) {
+                        setValuesForm({ ...valuesForm, title: e.target.value });
+                      }
+                    }}
                   />
                 </div>
 

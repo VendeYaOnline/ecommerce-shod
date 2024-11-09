@@ -82,7 +82,9 @@ const ModalAttribute = ({ active, onClose, selectedItem }: Props) => {
   };
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setNameAttribute(e.target.value);
+    if (e.target.value.length < 30) {
+      setNameAttribute(e.target.value);
+    }
   };
 
   useEffect(() => {
