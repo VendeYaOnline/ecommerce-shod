@@ -34,6 +34,9 @@ export interface ProductsResponse {
 
 export interface AttributeFind {
   attributes: AttributeUpdated[];
+  total: number;
+  page: number;
+  totalPages: number;
 }
 
 export interface ProductFind {

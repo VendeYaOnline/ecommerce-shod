@@ -212,7 +212,7 @@ const TableProducts = ({ selectedItem, setActiveModal }: Props) => {
             </p>
           </div>
         </div>
-        {data?.totalPages && (
+        {data && data.totalPages > 0 && (
           <nav className="flex items-center justify-center space-x-2 mt-4">
             <button
               className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:outline-none"

@@ -34,7 +34,7 @@ interface Props {
 
 const ModalAttribute = ({ active, onClose, selectedItem }: Props) => {
   const [type, setType] = useState("");
-  const { data, refetch } = useQueryAttribute();
+  const { data, refetch } = useQueryAttribute(1);
   const [isValid, setisValid] = useState(false);
   const [nameAttribute, setNameAttribute] = useState("");
   const { mutateAsync: mutateAsyncCreate, isPending: isPendingCreate } =
@@ -51,7 +51,7 @@ const ModalAttribute = ({ active, onClose, selectedItem }: Props) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (data?.some((i) => i.attribute_name === nameAttribute)) {
+    if (data?.attributes.some((i) => i.attribute_name === nameAttribute)) {
       toast.error("Ya existe un atributo con ese nombre");
     } else {
       !selectedItem.current

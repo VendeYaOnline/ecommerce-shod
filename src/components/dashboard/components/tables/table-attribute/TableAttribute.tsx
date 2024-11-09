@@ -18,22 +18,15 @@ interface Props {
 }
 
 const TableAttribute = ({ selectedItem, setActiveModal }: Props) => {
-  const { data, isLoading } = useQueryAttribute();
   const [currentPage, setCurrentPage] = useState(1);
+  const { data, isLoading } = useQueryAttribute(currentPage);
   const [active, setActive] = useState(false);
   const idElement = useRef(0);
   const itemsPerPage = 10;
 
-  // * Lógica para obtener los elementos a mostrar en la tabla según la página actual
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = data
-    ? data.slice(indexOfFirstItem, indexOfLastItem)
-    : [];
-
   // * Lógica para cambiar de página
   const handleNextPage = () => {
-    if (currentPage < Math.ceil((data?.length || 0) / itemsPerPage)) {
+    if (currentPage < (data?.totalPages || 1)) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -74,7 +67,7 @@ const TableAttribute = ({ selectedItem, setActiveModal }: Props) => {
           </div>
 
           <div className="overflow-x-auto">
-            {data?.length ? (
+            {data?.attributes.length ? (
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="border-t border-gray-200 bg-gray-50/50">
@@ -95,7 +88,7 @@ const TableAttribute = ({ selectedItem, setActiveModal }: Props) => {
                 </thead>
 
                 <tbody className="divide-y divide-gray-200">
-                  {currentItems.map((attribute) => (
+                  {data.attributes.map((attribute) => (
                     <tr
                       key={attribute.id}
                       className="group hover:bg-gray-50/50 transition-colors duration-200"
@@ -162,24 +155,23 @@ const TableAttribute = ({ selectedItem, setActiveModal }: Props) => {
           <div className="border-t border-gray-200 px-6 py-4">
             {isLoading && <TableSkeleton />}
             <p className="text-sm text-gray-500">
-              Mostrando {currentItems.length} de {data ? data.length : 0}{" "}
-              atributos
+              Mostrando {data?.attributes.length || 0} de {data?.total || 0}{" "}
+              productos
             </p>
           </div>
         </div>
 
-        <nav className="flex items-center justify-center space-x-2 mt-4">
-          <button
-            className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:outline-none"
-            onClick={handlePrevPage}
-            disabled={currentPage === 1}
-          >
-            Anterior
-          </button>
+        {data && data.totalPages > 0 && (
+          <nav className="flex items-center justify-center space-x-2 mt-4">
+            <button
+              className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:outline-none"
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+            >
+              Anterior
+            </button>
 
-          {Array.from(
-            { length: Math.ceil((data?.length || 0) / itemsPerPage) },
-            (_, index) => (
+            {Array.from({ length: data?.totalPages || 0 }, (_, index) => (
               <button
                 key={index}
                 className={`px-3 py-2 rounded-md text-sm font-medium ${
@@ -191,19 +183,17 @@ const TableAttribute = ({ selectedItem, setActiveModal }: Props) => {
               >
                 {index + 1}
               </button>
-            )
-          )}
+            ))}
 
-          <button
-            className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:outline-none"
-            onClick={handleNextPage}
-            disabled={
-              currentPage === Math.ceil((data?.length || 0) / itemsPerPage)
-            }
-          >
-            Siguiente
-          </button>
-        </nav>
+            <button
+              className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:outline-none"
+              onClick={handleNextPage}
+              disabled={currentPage === data.totalPages}
+            >
+              Siguiente
+            </button>
+          </nav>
+        )}
       </div>
     </div>
   );

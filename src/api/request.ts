@@ -8,9 +8,9 @@ import { axiosConfig } from "./config";
 
 // * ATRIBUTOS
 
-export const getAttributes = async () => {
-  return (await axiosConfig.get<AttributeFind>("/get-attributes")).data
-    .attributes;
+export const getAttributes = async (page: number) => {
+  return (await axiosConfig.get<AttributeFind>(`/get-attributes?page=${page}`))
+    .data;
 };
 
 export const createAttribute = async (data: AttributeData) => {
