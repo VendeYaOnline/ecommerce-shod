@@ -9,10 +9,10 @@ import {
 } from "react";
 import classes from "./SelectAttribute.module.css";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
-import { AttributeValues, ValuesAttributes } from "@/interfaces";
+import { AttributeValues, TpeValue, ValuesAttributes } from "@/interfaces";
 import { getContrastingColor } from "@/functions";
 
-interface Values {
+interface Value {
   valueString: string;
   valueObject: string;
 }
@@ -23,8 +23,9 @@ interface ValueObject {
 }
 
 interface Props {
-  values: Values;
-  setValues: Dispatch<SetStateAction<Values>>;
+  value: Value;
+  selectedType: TpeValue;
+  setValue: Dispatch<SetStateAction<Value>>;
   attributeValue: AttributeValues;
   setValuesAttributes: Dispatch<SetStateAction<ValuesAttributes>>;
   valuesAttributes: ValuesAttributes;
@@ -32,8 +33,9 @@ interface Props {
 }
 
 const SelectAttribute = ({
-  values,
-  setValues,
+  selectedType,
+  value,
+  setValue,
   attributeValue,
   placeholder,
   valuesAttributes,
@@ -43,45 +45,48 @@ const SelectAttribute = ({
 
   const onCloseString = useCallback(
     (newValue: string) => {
-      if (!valuesAttributes.valueString.some((i) => i === newValue)) {
+      if (
+        selectedType === "Color"
+          ? !valuesAttributes["Color"].some((i) => i.name === newValue)
+          : !valuesAttributes[selectedType].some((i: string) => i === newValue)
+      ) {
         setActiveSelect(false);
-        setValues({ valueObject: "", valueString: newValue });
+        setValue({ valueObject: "", valueString: newValue });
         setValuesAttributes({
-          valueObject: [],
-          valueString: [...valuesAttributes.valueString, newValue],
+          ...valuesAttributes,
+          [selectedType]: [...valuesAttributes[selectedType], newValue],
         });
       } else {
         setActiveSelect(false);
-        setValues({ valueObject: "", valueString: "" });
-        const valueRemove = valuesAttributes.valueString.filter(
+        setValue({ valueObject: "", valueString: "" });
+        const valueRemove = valuesAttributes[selectedType].filter(
           (i) => i !== newValue
         );
         setValuesAttributes({
-          valueObject: [],
-          valueString: valueRemove,
+          ...valuesAttributes,
+          [selectedType]: valueRemove,
         });
       }
     },
-    [valuesAttributes]
+    [valuesAttributes, selectedType]
   );
-
   const onCloseObject = useCallback(
     (newValue: ValueObject) => {
       setActiveSelect(false);
-      if (!valuesAttributes.valueObject.some((i) => i.name === newValue.name)) {
-        setValues({ valueString: "", valueObject: newValue.name });
+      if (!valuesAttributes.Color.some((i) => i.name === newValue.name)) {
+        setValue({ valueString: "", valueObject: newValue.name });
         setValuesAttributes({
-          valueString: [],
-          valueObject: [...valuesAttributes.valueObject, newValue],
+          ...valuesAttributes,
+          Color: [...valuesAttributes.Color, newValue],
         });
       } else {
-        setValues({ valueString: "", valueObject: "" });
-        const valueRemove = valuesAttributes.valueObject.filter(
+        setValue({ valueString: "", valueObject: "" });
+        const valueRemove = valuesAttributes.Color.filter(
           (i) => i.name !== newValue.name
         );
         setValuesAttributes({
-          valueString: [],
-          valueObject: valueRemove,
+          ...valuesAttributes,
+          Color: valueRemove,
         });
       }
     },
@@ -115,6 +120,7 @@ const SelectAttribute = ({
     };
   }, [activeSelect]);
 
+  console.log("valuesAttributes", valuesAttributes);
   return (
     <div className={classes["container-select"]} id="select-attribute">
       {attributeValue.every((elemento) => typeof elemento === "string") ? (
@@ -128,7 +134,7 @@ const SelectAttribute = ({
             onClick={onChange}
           >
             <span className="text-slate-400 ml-1 flex justify-between items-center">
-              {values.valueString !== "" ? values.valueString : placeholder}
+              {value.valueString !== "" ? value.valueString : placeholder}
               {activeSelect ? (
                 <ChevronUp size={14} />
               ) : (
@@ -143,26 +149,19 @@ const SelectAttribute = ({
                   key={index}
                   onClick={() => onCloseString(item as string)}
                   className={
-                    valuesAttributes.valueString.some((i) => i === item)
+                    valuesAttributes[selectedType].some((i) => i === item)
                       ? `${classes.active} flex justify-between items-center`
                       : "flex justify-between items-center"
                   }
                 >
                   {item as string}
-                  {valuesAttributes.valueString.some((i) => i === item) && (
+                  {valuesAttributes[selectedType].some((i) => i === item) && (
                     <Check size={12} />
                   )}
                 </span>
               ))}
             </div>
           )}
-          <div className="flex gap-2 mt-3">
-            {valuesAttributes.valueString.map((value, index) => (
-              <div key={index} className="burble">
-                {value}
-              </div>
-            ))}
-          </div>
         </>
       ) : (
         <>
@@ -175,7 +174,7 @@ const SelectAttribute = ({
             onClick={onChange}
           >
             <span className="text-slate-400 ml-1 flex justify-between items-center">
-              {values.valueObject !== "" ? values.valueObject : placeholder}
+              {value.valueObject !== "" ? value.valueObject : placeholder}
               {activeSelect ? (
                 <ChevronUp size={14} />
               ) : (
@@ -190,37 +189,51 @@ const SelectAttribute = ({
                   key={index}
                   onClick={() => onCloseObject(item as ValueObject)}
                   className={
-                    valuesAttributes.valueObject.some(
-                      (i) => i.name === item.name
+                    valuesAttributes[selectedType].some(
+                      (i: any) => i.name === item.name
                     )
                       ? `${classes.active} flex justify-between items-center`
                       : "flex justify-between items-center"
                   }
                 >
                   {item.name}
-                  {valuesAttributes.valueObject.some(
-                    (i) => i.name === item.name
+                  {valuesAttributes[selectedType].some(
+                    (i: any) => i.name === item.name
                   ) && <Check size={12} />}
                 </span>
               ))}
             </div>
           )}
-          <div className="flex gap-2 mt-3">
-            {valuesAttributes.valueObject.map(({ name, color }, index) => (
-              <div
-                className="rounded-lg py-1 px-3 text-sm"
-                key={index}
-                style={{
-                  backgroundColor: color,
-                  color: getContrastingColor(color),
-                }}
-              >
-                {name}
-              </div>
-            ))}
-          </div>
         </>
       )}
+
+      <div className="max-h-[200px] overflow-auto mt-2">
+        <h1>Valores de {selectedType}</h1>
+        <div className="flex  flex-wrap gap-2 mt-2">
+          {valuesAttributes[selectedType].map((item, index) => {
+            if (typeof item === "object") {
+              return (
+                <div
+                  className="rounded-lg py-1 px-3 text-sm"
+                  key={index}
+                  style={{
+                    backgroundColor: item.color,
+                    color: getContrastingColor(item.color),
+                  }}
+                >
+                  {item.name}
+                </div>
+              );
+            } else {
+              return (
+                <div key={index} className="burble">
+                  {item}
+                </div>
+              );
+            }
+          })}
+        </div>
+      </div>
     </div>
   );
 };

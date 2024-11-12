@@ -46,9 +46,14 @@ export interface ProductFind {
   totalPages: number;
 }
 
+export type TpeValue = "Color" | "Talla" | "Peso" | "Dimensión" | "Mililitro";
+
 export interface ValuesAttributes {
-  valueString: string[];
-  valueObject: {
+  Talla: string[];
+  Peso: string[];
+  Dimensión: string[];
+  Mililitro: string[];
+  Color: {
     name: string;
     color: string;
   }[];

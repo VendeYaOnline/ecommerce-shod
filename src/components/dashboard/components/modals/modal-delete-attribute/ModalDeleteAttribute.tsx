@@ -15,7 +15,7 @@ interface Props {
 
 const ModalDeleteAttribute = ({ active, onClose, idElement }: Props) => {
   const { mutateAsync, isPending } = useMutationDeleteAttribute();
-  const { refetch } = useQueryAttribute();
+  const { refetch } = useQueryAttribute(1);
 
   const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();

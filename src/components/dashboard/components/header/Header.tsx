@@ -1,4 +1,6 @@
 import { Search, Bell } from "lucide-react";
+import Logo from "/public/logo-vendeyaonline.webp";
+import Image from "next/image";
 
 export function Header() {
   return (
@@ -17,8 +19,10 @@ export function Header() {
             />
           </div>
           <Bell size={20} className="text-gray-600" />
-          <img
-            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+          <Image
+            width={50}
+            height={50}
+            src={Logo}
             alt="Profile"
             className="w-8 h-8 rounded-full"
           />

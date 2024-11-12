@@ -20,7 +20,7 @@ import Image from "next/image";
 import { toast } from "react-hot-toast";
 import { useQueryAttribute, useQueryProducts } from "@/api/queries";
 import SelectAttribute from "../../select-attribute/SelectAttribute";
-import { AttributeValues, ValuesAttributes } from "@/interfaces";
+import { AttributeValues, TpeValue, ValuesAttributes } from "@/interfaces";
 import { convertPrice } from "@/functions";
 
 interface Props {
@@ -32,7 +32,8 @@ const ModalProduct = ({ active, onClose }: Props) => {
   const [selectedAttribute, setSelectedAttribute] = useState("");
   const imagesProducts = useRef<File[]>([]);
   const { refetch } = useQueryProducts(1);
-  const [values, setValues] = useState({ valueString: "", valueObject: "" });
+  const selectedType = useRef("");
+  const [value, setValue] = useState({ valueString: "", valueObject: "" });
   const [valuesForm, setValuesForm] = useState({
     title: "",
     price: "",
@@ -40,8 +41,11 @@ const ModalProduct = ({ active, onClose }: Props) => {
     description: "",
   });
   const [valuesAttributes, setValuesAttributes] = useState<ValuesAttributes>({
-    valueString: [],
-    valueObject: [],
+    Color: [],
+    Dimensión: [],
+    Peso: [],
+    Talla: [],
+    Mililitro: [],
   });
   const [attributeValue, setAttributeValue] = useState<AttributeValues>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -52,21 +56,28 @@ const ModalProduct = ({ active, onClose }: Props) => {
   const { data } = useQueryAttribute(currentPage);
 
   useEffect(() => {
-    if (data?.attributes?.length) {
+    if (data && data?.attributes?.length) {
       const values = data.attributes
         ?.filter((i) => i.attribute_name === selectedAttribute)
         .map((e) => e.value);
       setAttributeValue(values[0]);
+      const type = data.attributes.filter(
+        (i) => i.attribute_name === selectedAttribute
+      )[0]?.attribute_type;
+      selectedType.current = type;
     }
-    setValuesAttributes({ valueString: [], valueObject: [] });
-    setValues({ valueString: "", valueObject: "" });
+
+    //setValues({ valueString: "", valueObject: "" });
   }, [selectedAttribute, data?.attributes]);
 
   const validAttribute = () => {
     if (selectedAttribute !== "") {
       if (
-        valuesAttributes.valueString.length ||
-        valuesAttributes.valueObject.length
+        valuesAttributes.Color.length ||
+        valuesAttributes.Dimensión.length ||
+        valuesAttributes.Mililitro.length ||
+        valuesAttributes.Peso.length ||
+        valuesAttributes.Talla.length
       ) {
         return true;
       } else {
@@ -94,9 +105,15 @@ const ModalProduct = ({ active, onClose }: Props) => {
 
   const cleanField = useCallback(() => {
     setValuesForm({ title: "", price: "", discount: "", description: "" });
-    setValuesAttributes({ valueString: [], valueObject: [] });
+    setValuesAttributes({
+      Color: [],
+      Dimensión: [],
+      Peso: [],
+      Talla: [],
+      Mililitro: [],
+    });
     setSelectedAttribute("");
-    setValues({ valueString: "", valueObject: "" });
+    //setValues({ valueString: "", valueObject: "" });
     imagesProducts.current = [];
     setAttributeValue([]);
     setSelectedFile(null);
@@ -112,12 +129,7 @@ const ModalProduct = ({ active, onClose }: Props) => {
       imagesProducts.current.forEach((file) => {
         formData.append("images", file);
       });
-      formData.append(
-        "attributes",
-        valuesAttributes.valueString.length
-          ? JSON.stringify(valuesAttributes.valueString)
-          : JSON.stringify(valuesAttributes.valueObject)
-      );
+      formData.append("attributes", JSON.stringify(valuesAttributes));
       // Agrega el resto de los valores del formulario
       Object.entries(valuesForm).forEach(([key, value]) => {
         formData.append(key, value);
@@ -141,6 +153,7 @@ const ModalProduct = ({ active, onClose }: Props) => {
       return data.attributes.map((attribute) => ({
         id: attribute.id,
         name: attribute.attribute_name,
+        type: attribute.attribute_type,
       }));
     } else {
       return [];
@@ -322,7 +335,10 @@ const ModalProduct = ({ active, onClose }: Props) => {
             <Select
               data={listAttributes}
               value={selectedAttribute}
-              setValue={setSelectedAttribute}
+              setValue={(value) => {
+                setSelectedAttribute(value),
+                  setValue({ valueObject: "", valueString: "" });
+              }}
               placeholder="Selecciona un atributo"
             />
           </div>
@@ -331,8 +347,9 @@ const ModalProduct = ({ active, onClose }: Props) => {
             <div className="mt-1 flex flex-col gap-1">
               <label>Valores</label>
               <SelectAttribute
-                values={values}
-                setValues={setValues}
+                value={value}
+                setValue={setValue}
+                selectedType={selectedType.current as TpeValue}
                 attributeValue={attributeValue}
                 valuesAttributes={valuesAttributes}
                 setValuesAttributes={setValuesAttributes}
