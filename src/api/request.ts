@@ -3,6 +3,7 @@ import {
   AttributeFind,
   AttributeUpdated,
   ProductFind,
+  ValuesAttributes,
 } from "@/interfaces";
 import { axiosConfig } from "./config";
 
@@ -28,8 +29,17 @@ export const deleteAttribute = async (idElement: number) => {
 // * PRODUCTOS
 
 export const getProducts = async (page: number) => {
-  return (await axiosConfig.get<ProductFind>(`/get-products?page=${page}`))
-    .data;
+  const result = (
+    await axiosConfig.get<ProductFind>(`/get-products?page=${page}`)
+  ).data;
+
+  return {
+    ...result,
+    products: result.products.map((i) => ({
+      ...i,
+      attributes: JSON.parse(i.attributes) as ValuesAttributes,
+    })),
+  };
 };
 
 export const createProduct = async (data: FormData) => {

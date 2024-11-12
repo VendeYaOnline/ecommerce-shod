@@ -66,8 +66,6 @@ const ModalProduct = ({ active, onClose }: Props) => {
       )[0]?.attribute_type;
       selectedType.current = type;
     }
-
-    //setValues({ valueString: "", valueObject: "" });
   }, [selectedAttribute, data?.attributes]);
 
   const validAttribute = () => {
@@ -104,7 +102,7 @@ const ModalProduct = ({ active, onClose }: Props) => {
   };
 
   const cleanField = useCallback(() => {
-    setValuesForm({ title: "", price: "", discount: "", description: "" });
+    setValuesForm({ title: "", price: "", discount: "0", description: "" });
     setValuesAttributes({
       Color: [],
       Dimensión: [],
@@ -113,7 +111,6 @@ const ModalProduct = ({ active, onClose }: Props) => {
       Mililitro: [],
     });
     setSelectedAttribute("");
-    //setValues({ valueString: "", valueObject: "" });
     imagesProducts.current = [];
     setAttributeValue([]);
     setSelectedFile(null);

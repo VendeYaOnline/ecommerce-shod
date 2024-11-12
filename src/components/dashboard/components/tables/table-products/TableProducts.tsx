@@ -1,5 +1,5 @@
 import { useQueryProducts } from "@/api/queries";
-import { PenLine, Trash2 } from "lucide-react";
+import { EllipsisVertical, PenLine, Trash2 } from "lucide-react";
 import {
   Dispatch,
   MutableRefObject,
@@ -59,7 +59,7 @@ const TableProducts = ({ selectedItem, setActiveModal }: Props) => {
     setActiveModal(true);
     selectedItem.current = attribute;
   }; */
-
+  console.log("data", data);
   return (
     <div className="min-h-screen bg-gray-50">
       <ModalDeleteAttribute
@@ -76,7 +76,7 @@ const TableProducts = ({ selectedItem, setActiveModal }: Props) => {
           </div>
 
           <div className="overflow-x-auto">
-            {data?.products.length ? (
+            {data && data?.products.length ? (
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="border-t border-gray-200 bg-gray-50/50">
@@ -102,7 +102,7 @@ const TableProducts = ({ selectedItem, setActiveModal }: Props) => {
                       key={product.id}
                       className="group hover:bg-gray-50/50 transition-colors duration-200"
                     >
-                      <td className="px-6 py-4 w-">
+                      <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <Image
                             src={product.image_product}
@@ -120,27 +120,27 @@ const TableProducts = ({ selectedItem, setActiveModal }: Props) => {
                       <td className="px-6 py-4">
                         <span className="text-gray-600">{product.price}</span>
                       </td>
-                      <td className="px-6 py-4">
-                        <div className="flex gap-2">
-                          {JSON.parse(product.attributes).map(
-                            (item: any, index: number) => {
-                              if (typeof item === "string") {
-                                return (
-                                  <div key={index} className="burble">
-                                    {item}
-                                  </div>
-                                );
-                              } else {
-                                return (
-                                  <div
-                                    key={index}
-                                    style={{ backgroundColor: item.color }}
-                                    className={`rounded-full w-4 h-4`}
-                                  />
-                                );
-                              }
-                            }
-                          )}
+                      <td className="px-6 w-0 over">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex gap-2">
+                            {product.attributes.Color.map(
+                              (item, index: number) => (
+                                <div
+                                  key={index}
+                                  style={{ backgroundColor: item.color }}
+                                  className={`rounded-full w-4 h-4`}
+                                />
+                              )
+                            )}
+                          </div>
+
+                          {/*        {product.attributes.Talla.map(
+                            (item, index: number) => (
+                              <div key={index} className="burble">
+                                {item}
+                              </div>
+                            )
+                          )} */}
                         </div>
                       </td>
 

@@ -51,7 +51,10 @@ const ModalAttribute = ({ active, onClose, selectedItem }: Props) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (data?.attributes.some((i) => i.attribute_name === nameAttribute)) {
+    if (
+      !selectedItem.current &&
+      data?.attributes.some((i) => i.attribute_name === nameAttribute)
+    ) {
       toast.error("Ya existe un atributo con ese nombre");
     } else {
       !selectedItem.current
@@ -215,7 +218,7 @@ const ModalAttribute = ({ active, onClose, selectedItem }: Props) => {
             {isPendingCreate || isPendingUpdated ? (
               <div className="loader" />
             ) : selectedItem.current ? (
-              "Editar atributo"
+              "Guardar cambios"
             ) : (
               "Crear atributo"
             )}
