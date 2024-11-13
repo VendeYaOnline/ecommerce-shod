@@ -13,12 +13,18 @@ import { ModalDeleteAttribute } from "../../modals";
 
 const headers = ["Nombre del atributo", "Tipo", "Valores"];
 interface Props {
+  currentPage: number;
+  setCurrentPage: Dispatch<SetStateAction<number>>;
   selectedItem: MutableRefObject<AttributeData | undefined>;
   setActiveModal: Dispatch<SetStateAction<boolean>>;
 }
 
-const TableAttribute = ({ selectedItem, setActiveModal }: Props) => {
-  const [currentPage, setCurrentPage] = useState(1);
+const TableAttribute = ({
+  currentPage,
+  setCurrentPage,
+  selectedItem,
+  setActiveModal,
+}: Props) => {
   const { data, isLoading } = useQueryAttribute(currentPage);
   const [active, setActive] = useState(false);
   const idElement = useRef(0);

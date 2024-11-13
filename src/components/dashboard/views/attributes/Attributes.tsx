@@ -7,6 +7,7 @@ import { ModalAttribute } from "../../components/modals";
 
 const Attributes = () => {
   const [activeModal, setActiveModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const selectedItem = useRef<AttributeUpdated | undefined>(undefined);
   return (
     <section>
@@ -16,6 +17,7 @@ const Attributes = () => {
         </Button>
       </div>
       <ModalAttribute
+        currentPage={currentPage}
         active={activeModal}
         selectedItem={selectedItem}
         onClose={() => {
@@ -23,6 +25,8 @@ const Attributes = () => {
         }}
       />
       <TableAttribute
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
         selectedItem={selectedItem}
         setActiveModal={setActiveModal}
       />

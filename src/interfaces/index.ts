@@ -68,3 +68,14 @@ export interface Product {
   images: string[];
   attributes: string[];
 }
+
+export interface ProductTable {
+  attributes: ValuesAttributes;
+  id: number;
+  image_product: string;
+  title: string;
+  price: string;
+  description: string;
+  discount: number;
+  images: string[];
+}

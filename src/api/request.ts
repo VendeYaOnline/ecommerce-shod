@@ -49,3 +49,13 @@ export const createProduct = async (data: FormData) => {
     },
   });
 };
+
+export const updatedProduct = async ({
+  id,
+  data,
+}: {
+  id: number;
+  data: FormData;
+}) => {
+  return axiosConfig.put(`/updated-product/${id}`, data);
+};

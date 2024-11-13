@@ -7,7 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { ProductsResponse } from "@/interfaces";
+import { ProductTable, ProductsResponse, ValuesAttributes } from "@/interfaces";
 import TableSkeleton from "../../skeleton/Skeleton";
 import { ModalDeleteAttribute } from "../../modals";
 import Image from "next/image";
@@ -22,12 +22,18 @@ const headers = [
   "Imagenes",
 ];
 interface Props {
-  selectedItem: MutableRefObject<ProductsResponse | undefined>;
+  currentPage: number;
+  setCurrentPage: Dispatch<SetStateAction<number>>;
+  selectedItem: MutableRefObject<ProductTable | undefined>;
   setActiveModal: Dispatch<SetStateAction<boolean>>;
 }
 
-const TableProducts = ({ selectedItem, setActiveModal }: Props) => {
-  const [currentPage, setCurrentPage] = useState(1);
+const TableProducts = ({
+  currentPage,
+  setCurrentPage,
+  selectedItem,
+  setActiveModal,
+}: Props) => {
   const { data, isLoading } = useQueryProducts(currentPage);
 
   const [active, setActive] = useState(false);
@@ -55,11 +61,10 @@ const TableProducts = ({ selectedItem, setActiveModal }: Props) => {
     idElement.current = id;
   };
 
-  /*   const openModal = (attribute: AttributeData) => {
+  const openModal = (product: ProductTable) => {
     setActiveModal(true);
-    selectedItem.current = attribute;
-  }; */
-  console.log("data", data);
+    selectedItem.current = product;
+  };
   return (
     <div className="min-h-screen bg-gray-50">
       <ModalDeleteAttribute
@@ -183,7 +188,7 @@ const TableProducts = ({ selectedItem, setActiveModal }: Props) => {
                             size={17}
                             color="#3D5300"
                             className="cursor-pointer"
-                            /*  onClick={() => openModal(attribute)} */
+                            onClick={() => openModal(product)}
                           />
                           <Trash2
                             size={17}

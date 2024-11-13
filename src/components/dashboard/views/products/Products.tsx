@@ -2,25 +2,37 @@ import { Button } from "@/components";
 import { useRef, useState } from "react";
 import { ModalProduct } from "../../components/modals";
 import TableProducts from "../../components/tables/table-products/TableProducts";
-import { ProductsResponse } from "@/interfaces";
+import { ProductTable } from "@/interfaces";
+import { Package } from "lucide-react";
 
 const Products = () => {
-  const [openModal, setOpenModal] = useState(false);
   const [activeModal, setActiveModal] = useState(false);
-  const selectedItem = useRef<ProductsResponse | undefined>(undefined);
-  const onClose = () => {
-    setOpenModal(false);
-  };
+  const [currentPage, setCurrentPage] = useState(1);
+  const selectedItem = useRef<ProductTable | undefined>(undefined);
+
   return (
     <section>
       <div className="mb-5">
-        <Button onClik={() => setOpenModal(true)}>Crear producto</Button>
+        <Button onClik={() => setActiveModal(true)}>
+          Crear producto <Package size={18} />
+        </Button>
       </div>
+
+      <ModalProduct
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        active={activeModal}
+        selectedItem={selectedItem}
+        onClose={() => {
+          setActiveModal(false), (selectedItem.current = undefined);
+        }}
+      />
       <TableProducts
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
         selectedItem={selectedItem}
         setActiveModal={setActiveModal}
       />
-      <ModalProduct active={openModal} onClose={onClose} />
     </section>
   );
 };

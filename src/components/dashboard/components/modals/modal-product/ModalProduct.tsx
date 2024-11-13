@@ -7,28 +7,45 @@ import Input from "../../input/Input";
 import Select from "../../select/Select";
 import Textarea from "../../textarea/Textarea";
 import {
+  Dispatch,
   FormEvent,
+  MutableRefObject,
+  SetStateAction,
   useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
-import { useMutationProduct } from "@/api/mutations";
+import { useMutationProduct, useMutationUpdatedProduct } from "@/api/mutations";
 import IconDelete from "/public/icon-delete.png";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
 import { useQueryAttribute, useQueryProducts } from "@/api/queries";
 import SelectAttribute from "../../select-attribute/SelectAttribute";
-import { AttributeValues, TpeValue, ValuesAttributes } from "@/interfaces";
+import {
+  AttributeValues,
+  ProductTable,
+  TpeValue,
+  ValuesAttributes,
+} from "@/interfaces";
 import { convertPrice } from "@/functions";
 
 interface Props {
+  currentPage: number;
+  selectedItem: MutableRefObject<ProductTable | undefined>;
+  setCurrentPage: Dispatch<SetStateAction<number>>;
   active: boolean;
   onClose: () => void;
 }
 
-const ModalProduct = ({ active, onClose }: Props) => {
+const ModalProduct = ({
+  currentPage,
+  selectedItem,
+  setCurrentPage,
+  active,
+  onClose,
+}: Props) => {
   const [selectedAttribute, setSelectedAttribute] = useState("");
   const imagesProducts = useRef<File[]>([]);
   const { refetch } = useQueryProducts(1);
@@ -52,8 +69,10 @@ const ModalProduct = ({ active, onClose }: Props) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [productImages, setProductImages] = useState<string[]>([]);
   const { mutateAsync, isPending } = useMutationProduct();
-  const [currentPage, setCurrentPage] = useState(1);
+  const { mutateAsync: mutateAsyncUpdated, isPending: isPendingUpdated } =
+    useMutationUpdatedProduct();
   const { data } = useQueryAttribute(currentPage);
+  const { data: products } = useQueryProducts(currentPage);
 
   useEffect(() => {
     if (data && data?.attributes?.length) {
@@ -67,6 +86,20 @@ const ModalProduct = ({ active, onClose }: Props) => {
       selectedType.current = type;
     }
   }, [selectedAttribute, data?.attributes]);
+
+  useEffect(() => {
+    if (selectedItem.current) {
+      setImagePreview(selectedItem.current.image_product);
+      setValuesForm({
+        title: selectedItem.current.title,
+        description: selectedItem.current.description,
+        discount: selectedItem.current.discount + "",
+        price: selectedItem.current.price,
+      });
+      setProductImages(selectedItem.current.images);
+      setValuesAttributes(selectedItem.current.attributes);
+    }
+  }, [selectedItem.current]);
 
   const validAttribute = () => {
     if (selectedAttribute !== "") {
@@ -89,7 +122,7 @@ const ModalProduct = ({ active, onClose }: Props) => {
   const isValid = () => {
     if (
       validAttribute() &&
-      selectedFile &&
+      imagePreview &&
       valuesForm.title &&
       valuesForm.price &&
       valuesForm.discount &&
@@ -120,26 +153,50 @@ const ModalProduct = ({ active, onClose }: Props) => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!isValid()) {
-      const formData = new FormData();
-      formData.append("file", selectedFile!);
-      imagesProducts.current.forEach((file) => {
-        formData.append("images", file);
-      });
-      formData.append("attributes", JSON.stringify(valuesAttributes));
-      // Agrega el resto de los valores del formulario
-      Object.entries(valuesForm).forEach(([key, value]) => {
-        formData.append(key, value);
-      });
+    if (selectedItem.current) {
+      if (!isValid()) {
+        const formData = new FormData();
+        formData.append("file", selectedFile!);
+        imagesProducts.current.forEach((file) => {
+          formData.append("images", file);
+        });
+        formData.append("attributes", JSON.stringify(valuesAttributes));
+        // Agrega el resto de los valores del formulario
+        Object.entries(valuesForm).forEach(([key, value]) => {
+          formData.append(key, value);
+        });
+        console.log("#formData", formData);
+        await mutateAsyncUpdated({
+          id: selectedItem.current.id,
+          data: formData,
+        });
+        toast.success("Producto actualizado");
+        refetch();
+        cleanField();
+        onClose();
+      }
+    } else {
+      //!products?.products.some((i) => i.title === selectedItem.current?.title)
+      if (!isValid()) {
+        const formData = new FormData();
+        formData.append("file", selectedFile!);
+        imagesProducts.current.forEach((file) => {
+          formData.append("images", file);
+        });
+        formData.append("attributes", JSON.stringify(valuesAttributes));
+        // Agrega el resto de los valores del formulario
+        Object.entries(valuesForm).forEach(([key, value]) => {
+          formData.append(key, value);
+        });
 
-      await mutateAsync(formData);
-      toast.success("Producto creado");
-      refetch();
-      cleanField();
-      onClose();
+        await mutateAsync(formData);
+        toast.success("Producto creado");
+        refetch();
+        cleanField();
+        onClose();
+      }
     }
   };
-
   const deleteImage = useCallback(() => {
     setSelectedFile(null);
     setImagePreview(null);
@@ -223,7 +280,11 @@ const ModalProduct = ({ active, onClose }: Props) => {
                 cleanField();
               }}
             />
-            <h1 className="mb-2 font-bold text-xl">Crear un producto</h1>
+            <h1 className="mb-2 font-bold text-xl">
+              {selectedItem.current
+                ? "Editar un producto"
+                : "Crear un producto"}{" "}
+            </h1>
           </div>
 
           <div className="relative mt-1">
@@ -407,8 +468,14 @@ const ModalProduct = ({ active, onClose }: Props) => {
             )}
           </section>
           <br />
-          <Button disabled={isValid() || isPending}>
-            {isPending ? <div className="loader" /> : "Guardar producto"}{" "}
+          <Button disabled={isValid() || isPending || isPendingUpdated}>
+            {isPending || isPendingUpdated ? (
+              <div className="loader" />
+            ) : selectedItem ? (
+              "Guardar cambios"
+            ) : (
+              "Crear producto"
+            )}{" "}
           </Button>
         </form>
       </section>

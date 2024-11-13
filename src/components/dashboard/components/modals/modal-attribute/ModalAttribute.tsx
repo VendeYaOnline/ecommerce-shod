@@ -27,14 +27,20 @@ import Select from "../../select/Select";
 import Button from "../../button/Button";
 
 interface Props {
+  currentPage: number;
   active: boolean;
   selectedItem: MutableRefObject<AttributeUpdated | undefined>;
   onClose: () => void;
 }
 
-const ModalAttribute = ({ active, onClose, selectedItem }: Props) => {
+const ModalAttribute = ({
+  currentPage,
+  active,
+  onClose,
+  selectedItem,
+}: Props) => {
   const [type, setType] = useState("");
-  const { data, refetch } = useQueryAttribute(1);
+  const { data, refetch } = useQueryAttribute(currentPage);
   const [isValid, setisValid] = useState(false);
   const [nameAttribute, setNameAttribute] = useState("");
   const { mutateAsync: mutateAsyncCreate, isPending: isPendingCreate } =
