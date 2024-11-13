@@ -80,6 +80,10 @@ const TableProducts = ({
           <div className="p-6">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900">Productos</h2>
+              <h2>
+                {data &&
+                  data?.total + "/" + process.env.NEXT_PUBLIC_MAXIMUM_PRODUCTS}
+              </h2>
             </div>
           </div>
 
@@ -113,10 +117,12 @@ const TableProducts = ({
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <Image
+                            priority
                             src={product.image_product}
                             alt="Imagen del producto"
-                            width={80}
-                            height={80}
+                            width={50}
+                            height={50}
+                            style={{ width: "auto", height: "auto" }}
                             className="rounded-lg"
                           />
                         </div>
@@ -170,11 +176,13 @@ const TableProducts = ({
                             product.images.map(
                               (image: string, index: number) => (
                                 <Image
+                                  priority
                                   key={index}
                                   src={image}
                                   alt="Imagen del producto"
-                                  width={50}
-                                  height={50}
+                                  width={30}
+                                  height={30}
+                                  style={{ width: "auto", height: "auto" }}
                                   className="rounded-lg"
                                 />
                               )

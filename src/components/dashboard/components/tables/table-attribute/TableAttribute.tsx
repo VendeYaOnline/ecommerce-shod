@@ -163,7 +163,7 @@ const TableAttribute = ({
             {isLoading && <TableSkeleton />}
             <p className="text-sm text-gray-500">
               Mostrando {data?.attributes.length || 0} de {data?.total || 0}{" "}
-              productos
+              atributos
             </p>
           </div>
         </div>

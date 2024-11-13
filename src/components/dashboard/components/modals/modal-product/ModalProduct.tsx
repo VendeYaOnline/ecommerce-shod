@@ -67,9 +67,10 @@ const ModalProduct = ({
   const [attributeValue, setAttributeValue] = useState<AttributeValues>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [productImages, setProductImages] = useState<string[]>([]);
+  const [productImages, setProductImages] = useState<
+    { url: string; name: string }[]
+  >([]);
   const { mutateAsync, isPending } = useMutationProduct();
-  const nameImagesProducts = useRef<string[]>([]);
   const { mutateAsync: mutateAsyncUpdated, isPending: isPendingUpdated } =
     useMutationUpdatedProduct();
   const { data } = useQueryAttribute(currentPage);
@@ -91,13 +92,20 @@ const ModalProduct = ({
   useEffect(() => {
     if (selectedItem.current) {
       setImagePreview(selectedItem.current.image_product);
+      setProductImages(
+        selectedItem.current.images.map((i) => ({
+          name: i.split("amazonaws.com")[1],
+          url: i,
+        }))
+      );
+
       setValuesForm({
         title: selectedItem.current.title,
         description: selectedItem.current.description,
         discount: selectedItem.current.discount + "",
         price: selectedItem.current.price,
       });
-      setProductImages(selectedItem.current.images);
+
       setValuesAttributes(selectedItem.current.attributes);
     }
   }, [selectedItem.current]);
@@ -119,7 +127,6 @@ const ModalProduct = ({
       return true;
     }
   };
-
   const isValid = () => {
     if (
       validAttribute() &&
@@ -150,8 +157,8 @@ const ModalProduct = ({
     setImagePreview(null);
 
     imagesProducts.current = [];
-    nameImagesProducts.current = [];
     setProductImages([]);
+    selectedItem.current = undefined;
   }, []);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -164,6 +171,13 @@ const ModalProduct = ({
           imagesProducts.current.forEach((file) => {
             formData.append("images", file);
           });
+
+          formData.append(
+            "urls_images",
+            selectedItem.current?.images.length
+              ? JSON.stringify(selectedItem.current?.images)
+              : "[]"
+          );
           formData.append("attributes", JSON.stringify(valuesAttributes));
           // Agrega el resto de los valores del formulario
           Object.entries(valuesForm).forEach(([key, value]) => {
@@ -178,8 +192,14 @@ const ModalProduct = ({
           cleanField();
           onClose();
         }
-      } catch (error) {
-        toast.error("Error inesperado al crear el producto");
+      } catch (error: any) {
+        if (error.response.data.message.includes("La imagen con el nombre")) {
+          toast.error(
+            "Una o algunas de las imágenes que intentas subir ya existen en tu galería"
+          );
+        } else {
+          toast.error("Error inesperado al actualizar el producto");
+        }
       }
     } else {
       if (!products?.products.some((i) => i.title === valuesForm.title)) {
@@ -187,9 +207,12 @@ const ModalProduct = ({
           if (!isValid()) {
             const formData = new FormData();
             formData.append("file", selectedFile!);
-            imagesProducts.current.forEach((file) => {
-              formData.append("images", file);
-            });
+            formData.append(
+              "images",
+              productImages.length
+                ? JSON.stringify(imagesProducts.current)
+                : "[]"
+            );
             formData.append("attributes", JSON.stringify(valuesAttributes));
             // Agrega el resto de los valores del formulario
             Object.entries(valuesForm).forEach(([key, value]) => {
@@ -203,7 +226,8 @@ const ModalProduct = ({
             onClose();
           }
         } catch (error) {
-          toast.error("Error inesperado al actualizar el producto");
+          console.log("error", error);
+          toast.error("Error inesperado al crear el producto");
         }
       } else {
         toast.error("Ya existe un producto con el mismo titulo");
@@ -262,29 +286,46 @@ const ModalProduct = ({
           );
           return;
         } else {
-          if (!nameImagesProducts.current.some((i) => i === file.name)) {
+          if (!imagesProducts.current.some((i) => i.name === file.name)) {
             imagesProducts.current = [...imagesProducts.current, file];
-            nameImagesProducts.current = [
-              ...nameImagesProducts.current,
-              file.name,
-            ];
+
             const imageUrl = URL.createObjectURL(file);
-            setProductImages((prev) => [...prev, imageUrl]);
+            setProductImages((prev) => [
+              ...prev,
+              { name: file.name, url: imageUrl },
+            ]);
             event.target.value = "";
           } else {
+            event.target.value = "";
             toast.error("La imagen ya existe");
           }
         }
       }
     },
-    [productImages, nameImagesProducts.current]
+    [productImages, imagesProducts.current]
   );
+
   const deleteImageProduct = useCallback(
-    (image: string) => {
-      const images = productImages.filter((i) => i !== image);
-      setProductImages(images);
+    (image: { url: string; name: string }) => {
+      if (image.url.includes("https")) {
+        const images = productImages.filter((i) => i.name !== image.name);
+        setProductImages(images);
+        if (selectedItem.current) {
+          selectedItem.current = {
+            ...selectedItem.current,
+            images: images.map((i) => i.url),
+          };
+        }
+      } else {
+        const images = productImages.filter((i) => i.name !== image.name);
+        setProductImages(images);
+        const imagenRemove = imagesProducts.current.filter(
+          (i) => i.name !== image.name
+        );
+        imagesProducts.current = imagenRemove;
+      }
     },
-    [productImages]
+    [productImages, selectedItem.current]
   );
 
   return (
@@ -455,7 +496,7 @@ const ModalProduct = ({
               <div className="relative" key={index}>
                 <div style={{ width: 80, height: 80 }}>
                   <img
-                    src={image}
+                    src={image.url}
                     alt="Imagen del producto"
                     className="rounded-[5px]"
                     style={{
@@ -468,8 +509,9 @@ const ModalProduct = ({
 
                 <Image
                   src={IconDelete}
-                  width={20}
-                  height={20}
+                  width={10}
+                  height={10}
+                  style={{ width: "auto", height: "auto" }}
                   onClick={() => deleteImageProduct(image)}
                   alt="icono de eliminar imagen"
                   className={classes["icon-delete-image"]}
@@ -494,7 +536,7 @@ const ModalProduct = ({
           <Button disabled={isValid() || isPending || isPendingUpdated}>
             {isPending || isPendingUpdated ? (
               <div className="loader" />
-            ) : selectedItem ? (
+            ) : selectedItem.current ? (
               "Guardar cambios"
             ) : (
               "Crear producto"
