@@ -120,7 +120,6 @@ const SelectAttribute = ({
     };
   }, [activeSelect]);
 
-  console.log("valuesAttributes", valuesAttributes);
   return (
     <div className={classes["container-select"]} id="select-attribute">
       {attributeValue.every((elemento) => typeof elemento === "string") ? (

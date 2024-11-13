@@ -7,10 +7,10 @@ import {
   useRef,
   useState,
 } from "react";
-import { ProductTable, ProductsResponse, ValuesAttributes } from "@/interfaces";
+import { ProductTable } from "@/interfaces";
 import TableSkeleton from "../../skeleton/Skeleton";
-import { ModalDeleteAttribute } from "../../modals";
 import Image from "next/image";
+import ModalDeleteProduct from "../../modals/modal-delete-product/ModalDeleteProduct";
 
 const headers = [
   "Imagen",
@@ -65,9 +65,12 @@ const TableProducts = ({
     setActiveModal(true);
     selectedItem.current = product;
   };
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <ModalDeleteAttribute
+      <ModalDeleteProduct
+        setCurrentPage={setCurrentPage}
+        totalItems={data?.total || 0}
         active={active}
         onClose={onClose}
         idElement={idElement.current}
@@ -102,7 +105,7 @@ const TableProducts = ({
                 </thead>
 
                 <tbody className="divide-y divide-gray-200">
-                  {data.products.map((product) => (
+                  {data.products.sort().map((product) => (
                     <tr
                       key={product.id}
                       className="group hover:bg-gray-50/50 transition-colors duration-200"

@@ -5,6 +5,7 @@ import {
   updatedAttribute,
   createProduct,
   updatedProduct,
+  deleteProduct,
 } from "./request";
 
 // * ATRIBUTOS
@@ -29,4 +30,8 @@ export const useMutationProduct = () => {
 
 export const useMutationUpdatedProduct = () => {
   return useMutation({ mutationFn: updatedProduct });
+};
+
+export const useMutationDeleteProduct = () => {
+  return useMutation({ mutationFn: deleteProduct });
 };

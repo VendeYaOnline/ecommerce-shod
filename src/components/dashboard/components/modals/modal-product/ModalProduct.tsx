@@ -48,7 +48,7 @@ const ModalProduct = ({
 }: Props) => {
   const [selectedAttribute, setSelectedAttribute] = useState("");
   const imagesProducts = useRef<File[]>([]);
-  const { refetch } = useQueryProducts(1);
+  const { refetch } = useQueryProducts(currentPage);
   const selectedType = useRef("");
   const [value, setValue] = useState({ valueString: "", valueObject: "" });
   const [valuesForm, setValuesForm] = useState({
@@ -69,6 +69,7 @@ const ModalProduct = ({
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [productImages, setProductImages] = useState<string[]>([]);
   const { mutateAsync, isPending } = useMutationProduct();
+  const nameImagesProducts = useRef<string[]>([]);
   const { mutateAsync: mutateAsyncUpdated, isPending: isPendingUpdated } =
     useMutationUpdatedProduct();
   const { data } = useQueryAttribute(currentPage);
@@ -144,56 +145,68 @@ const ModalProduct = ({
       Mililitro: [],
     });
     setSelectedAttribute("");
-    imagesProducts.current = [];
     setAttributeValue([]);
     setSelectedFile(null);
     setImagePreview(null);
+
+    imagesProducts.current = [];
+    nameImagesProducts.current = [];
     setProductImages([]);
   }, []);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (selectedItem.current) {
-      if (!isValid()) {
-        const formData = new FormData();
-        formData.append("file", selectedFile!);
-        imagesProducts.current.forEach((file) => {
-          formData.append("images", file);
-        });
-        formData.append("attributes", JSON.stringify(valuesAttributes));
-        // Agrega el resto de los valores del formulario
-        Object.entries(valuesForm).forEach(([key, value]) => {
-          formData.append(key, value);
-        });
-        console.log("#formData", formData);
-        await mutateAsyncUpdated({
-          id: selectedItem.current.id,
-          data: formData,
-        });
-        toast.success("Producto actualizado");
-        refetch();
-        cleanField();
-        onClose();
+      try {
+        if (!isValid()) {
+          const formData = new FormData();
+          formData.append("file", selectedFile!);
+          imagesProducts.current.forEach((file) => {
+            formData.append("images", file);
+          });
+          formData.append("attributes", JSON.stringify(valuesAttributes));
+          // Agrega el resto de los valores del formulario
+          Object.entries(valuesForm).forEach(([key, value]) => {
+            formData.append(key, value);
+          });
+          await mutateAsyncUpdated({
+            id: selectedItem.current.id,
+            data: formData,
+          });
+          toast.success("Producto actualizado");
+          refetch();
+          cleanField();
+          onClose();
+        }
+      } catch (error) {
+        toast.error("Error inesperado al crear el producto");
       }
     } else {
-      //!products?.products.some((i) => i.title === selectedItem.current?.title)
-      if (!isValid()) {
-        const formData = new FormData();
-        formData.append("file", selectedFile!);
-        imagesProducts.current.forEach((file) => {
-          formData.append("images", file);
-        });
-        formData.append("attributes", JSON.stringify(valuesAttributes));
-        // Agrega el resto de los valores del formulario
-        Object.entries(valuesForm).forEach(([key, value]) => {
-          formData.append(key, value);
-        });
+      if (!products?.products.some((i) => i.title === valuesForm.title)) {
+        try {
+          if (!isValid()) {
+            const formData = new FormData();
+            formData.append("file", selectedFile!);
+            imagesProducts.current.forEach((file) => {
+              formData.append("images", file);
+            });
+            formData.append("attributes", JSON.stringify(valuesAttributes));
+            // Agrega el resto de los valores del formulario
+            Object.entries(valuesForm).forEach(([key, value]) => {
+              formData.append(key, value);
+            });
 
-        await mutateAsync(formData);
-        toast.success("Producto creado");
-        refetch();
-        cleanField();
-        onClose();
+            await mutateAsync(formData);
+            toast.success("Producto creado");
+            refetch();
+            cleanField();
+            onClose();
+          }
+        } catch (error) {
+          toast.error("Error inesperado al actualizar el producto");
+        }
+      } else {
+        toast.error("Ya existe un producto con el mismo titulo");
       }
     }
   };
@@ -249,20 +262,30 @@ const ModalProduct = ({
           );
           return;
         } else {
-          imagesProducts.current = [...imagesProducts.current, file];
-          const imageUrl = URL.createObjectURL(file);
-          setProductImages((prev) => [...prev, imageUrl]);
-          event.target.value = "";
+          if (!nameImagesProducts.current.some((i) => i === file.name)) {
+            imagesProducts.current = [...imagesProducts.current, file];
+            nameImagesProducts.current = [
+              ...nameImagesProducts.current,
+              file.name,
+            ];
+            const imageUrl = URL.createObjectURL(file);
+            setProductImages((prev) => [...prev, imageUrl]);
+            event.target.value = "";
+          } else {
+            toast.error("La imagen ya existe");
+          }
         }
       }
     },
+    [productImages, nameImagesProducts.current]
+  );
+  const deleteImageProduct = useCallback(
+    (image: string) => {
+      const images = productImages.filter((i) => i !== image);
+      setProductImages(images);
+    },
     [productImages]
   );
-
-  const deleteImageProduct = useCallback((image: string) => {
-    const images = productImages.filter((i) => i !== image);
-    setProductImages(images);
-  }, []);
 
   return (
     active && (

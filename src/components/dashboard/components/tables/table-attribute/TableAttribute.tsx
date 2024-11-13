@@ -59,6 +59,8 @@ const TableAttribute = ({
   return (
     <div className="min-h-screen bg-gray-50">
       <ModalDeleteAttribute
+        setCurrentPage={setCurrentPage}
+        totalItems={data?.total || 0}
         active={active}
         onClose={onClose}
         idElement={idElement.current}

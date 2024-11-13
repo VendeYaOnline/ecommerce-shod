@@ -59,3 +59,7 @@ export const updatedProduct = async ({
 }) => {
   return axiosConfig.put(`/updated-product/${id}`, data);
 };
+
+export const deleteProduct = async (idElement: number) => {
+  return axiosConfig.delete(`/delete-product/${idElement}`);
+};

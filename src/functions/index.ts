@@ -78,3 +78,11 @@ export function convertPrice(value: string) {
 
   return formattedValue; // Retorna el valor en formato "COP 10.000"
 }
+
+export function calculatePageAfterDeletion(
+  totalItems: number,
+  itemsPerPage: number
+) {
+  // Calcula el total de páginas antes de la eliminación
+  return Math.ceil(totalItems / itemsPerPage);
+}
