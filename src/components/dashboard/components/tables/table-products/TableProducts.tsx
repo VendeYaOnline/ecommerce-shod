@@ -4,20 +4,22 @@ import {
   Dispatch,
   MutableRefObject,
   SetStateAction,
+  useCallback,
   useRef,
   useState,
 } from "react";
-import { ProductTable } from "@/interfaces";
+import { ProductTable, TpeValue, ValuesAttributes } from "@/interfaces";
 import TableSkeleton from "../../skeleton/Skeleton";
 import Image from "next/image";
 import ModalDeleteProduct from "../../modals/modal-delete-product/ModalDeleteProduct";
+import DropdownMenu from "../../dropdown-menu/DropdownMenu";
 
 const headers = [
   "Imagen",
   "Titulo",
-  "Pricio",
+  "Precio",
   "Atributos",
-  "Descripcion",
+  "Descripción",
   "Descunto",
   "Imagenes",
 ];
@@ -35,9 +37,23 @@ const TableProducts = ({
   setActiveModal,
 }: Props) => {
   const { data, isLoading } = useQueryProducts(currentPage);
-
   const [active, setActive] = useState(false);
   const idElement = useRef(0);
+
+  const [attributeSelect, setAttributeSelect] = useState<
+    Record<string | number, string>
+  >({});
+
+  const addDynamicProperty = (key: string | number, value: string) => {
+    setAttributeSelect((prevState) => ({ ...prevState, [key]: value }));
+  };
+
+  const coco = useCallback(
+    (id: any) => {
+      return attributeSelect[id] as TpeValue;
+    },
+    [attributeSelect]
+  );
 
   // * Lógica para cambiar de página
   const handleNextPage = () => {
@@ -66,6 +82,11 @@ const TableProducts = ({
     selectedItem.current = product;
   };
 
+  function attributeList(objeto: ValuesAttributes) {
+    return Object.keys(objeto)
+      .filter((propiedad) => objeto[propiedad as TpeValue].length > 0)
+      .map((propiedad) => ({ text: propiedad }));
+  }
   return (
     <div className="min-h-screen bg-gray-50">
       <ModalDeleteProduct
@@ -134,27 +155,54 @@ const TableProducts = ({
                       <td className="px-6 py-4">
                         <span className="text-gray-600">{product.price}</span>
                       </td>
-                      <td className="px-6 w-0 over">
+                      <td className="px-3 w-0">
                         <div className="flex items-center justify-between gap-2">
-                          <div className="flex gap-2">
-                            {product.attributes.Color.map(
-                              (item, index: number) => (
-                                <div
-                                  key={index}
-                                  style={{ backgroundColor: item.color }}
-                                  className={`rounded-full w-4 h-4`}
-                                />
-                              )
-                            )}
-                          </div>
+                          {!attributeList(product.attributes).length ? (
+                            <div className="w-[150px] ml-3">
+                              <span className="text-gray-600 text-sm">
+                                Sin atributos
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center">
+                              {coco(product.id) ? (
+                                <div className="container-attributes">
+                                  {coco(product.id) === "Color"
+                                    ? product.attributes[coco(product.id)]?.map(
+                                        (item: any, index) => (
+                                          <div
+                                            key={index}
+                                            style={{
+                                              backgroundColor: item.color,
+                                            }}
+                                            className={`rounded-full w-4 h-4`}
+                                          />
+                                        )
+                                      )
+                                    : product.attributes[coco(product.id)]?.map(
+                                        (item: any, index) => (
+                                          <div key={index} className="burble">
+                                            {item}
+                                          </div>
+                                        )
+                                      )}
+                                </div>
+                              ) : (
+                                <div className="w-[150px]">
+                                  <span className="text-gray-600 text-sm">
+                                    Selecciona un atributo
+                                  </span>
+                                </div>
+                              )}
 
-                          {/*        {product.attributes.Talla.map(
-                            (item, index: number) => (
-                              <div key={index} className="burble">
-                                {item}
-                              </div>
-                            )
-                          )} */}
+                              <DropdownMenu
+                                id={product.id}
+                                addDynamicProperty={addDynamicProperty}
+                                itemSelected={coco(product.id)}
+                                menuItems={attributeList(product.attributes)}
+                              />
+                            </div>
+                          )}
                         </div>
                       </td>
 
