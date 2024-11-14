@@ -63,6 +63,7 @@ const ModalProduct = ({
     Peso: [],
     Talla: [],
     Mililitro: [],
+    Género: [],
   });
   const [attributeValue, setAttributeValue] = useState<AttributeValues>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -117,7 +118,8 @@ const ModalProduct = ({
         valuesAttributes.Dimensión.length ||
         valuesAttributes.Mililitro.length ||
         valuesAttributes.Peso.length ||
-        valuesAttributes.Talla.length
+        valuesAttributes.Talla.length ||
+        valuesAttributes.Género.length
       ) {
         return true;
       } else {
@@ -150,6 +152,7 @@ const ModalProduct = ({
       Peso: [],
       Talla: [],
       Mililitro: [],
+      Género: [],
     });
     setSelectedAttribute("");
     setAttributeValue([]);

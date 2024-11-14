@@ -12,6 +12,7 @@ import { Attribute, AttributeUpdated, AttributeValues } from "@/interfaces";
 import {
   AttributeColor,
   AttributeDimension,
+  AttributeGender,
   AttributeMilliliter,
   AttributeSize,
   AttributeWeight,
@@ -53,7 +54,9 @@ const ModalAttribute = ({
     weight: [],
     dimension: [],
     mililitir: [],
+    gender: [],
   });
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -83,6 +86,7 @@ const ModalAttribute = ({
         weight: [],
         dimension: [],
         mililitir: [],
+        gender: [],
       });
       setNameAttribute("");
       setType("");
@@ -98,6 +102,7 @@ const ModalAttribute = ({
 
   useEffect(() => {
     if (selectedItem.current) {
+      console.log("selectedItem.current", selectedItem.current);
       setNameAttribute(selectedItem.current.attribute_name);
       setType(selectedItem.current.attribute_type);
       setValueAttribute({
@@ -112,6 +117,7 @@ const ModalAttribute = ({
         weight: [],
         dimension: [],
         mililitir: [],
+        gender: [],
       });
     }
   }, [selectedItem.current]);
@@ -131,6 +137,9 @@ const ModalAttribute = ({
         return valueAttribute.dimension;
       case "Mililitro":
         return valueAttribute.mililitir;
+
+      case "Género":
+        return valueAttribute.gender;
       default:
         return [];
     }
@@ -181,6 +190,16 @@ const ModalAttribute = ({
       case "Mililitro":
         return (
           <AttributeMilliliter
+            attributes={valueAttribute}
+            nameAttribute={nameAttribute}
+            setValueAttribute={setValueAttribute}
+            setisValid={setisValid}
+          />
+        );
+
+      case "Género":
+        return (
+          <AttributeGender
             attributes={valueAttribute}
             nameAttribute={nameAttribute}
             setValueAttribute={setValueAttribute}

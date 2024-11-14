@@ -22,6 +22,10 @@ export const attributes = [
     id: 5,
     name: "Mililitro",
   },
+  {
+    id: 6,
+    name: "Género",
+  },
 ];
 
 export const nameKey = (type: string) => {
@@ -39,10 +43,40 @@ export const nameKey = (type: string) => {
       return "dimension";
     case "Mililitro":
       return "mililitir";
+
+    case "Género":
+      return "gender";
     default:
       return "";
   }
 };
+
+export const dataGenders = [
+  {
+    id: 1,
+    gender: "Masculino",
+  },
+  {
+    id: 2,
+    gender: "Femenino",
+  },
+  {
+    id: 3,
+    gender: "Hombre",
+  },
+  {
+    id: 4,
+    gender: "Mujer",
+  },
+  {
+    id: 5,
+    gender: "Niño",
+  },
+  {
+    id: 6,
+    gender: "Niña",
+  },
+];
 
 export const getContrastingColor = (hexColor: string) => {
   // Convertir el color hex a valores RGB

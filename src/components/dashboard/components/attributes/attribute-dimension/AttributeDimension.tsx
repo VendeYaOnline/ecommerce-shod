@@ -27,9 +27,9 @@ const AttributeDimension = ({
   const [error, setError] = useState(false);
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const regex = /^[a-zA-Z0-9]+$/;
+    const regex = /^[a-zA-Z0-9\s-]+$/;
     if (
-      (e.target.value.length < 10 && regex.test(e.target.value)) ||
+      (e.target.value.length < 15 && regex.test(e.target.value)) ||
       e.target.value === ""
     ) {
       setValueDimension(e.target.value.toLocaleUpperCase());
@@ -69,7 +69,7 @@ const AttributeDimension = ({
         <Input
           value={valueDimension}
           onChange={onChange}
-          placeholder="5MM, 10CM, 15M..."
+          placeholder="5MM, 10CM - ALTO, 15M - ANCHO"
         />
         <button
           type="button"

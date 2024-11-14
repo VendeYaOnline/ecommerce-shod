@@ -4,6 +4,7 @@ export interface Attribute {
   weight: string[];
   dimension: string[];
   mililitir: string[];
+  gender: string[];
 }
 
 export interface AttributeData {
@@ -46,12 +47,13 @@ export interface ProductFind {
   totalPages: number;
 }
 
-export type TpeValue = "Color" | "Talla" | "Peso" | "Dimensión" | "Mililitro";
+export type TpeValue = "Color" | "Talla" | "Peso" | "Dimensión" | "Mililitro" | "Género";
 
 export interface ValuesAttributes {
   Talla: string[];
   Peso: string[];
   Dimensión: string[];
+  Género: string[];
   Mililitro: string[];
   Color: {
     name: string;
