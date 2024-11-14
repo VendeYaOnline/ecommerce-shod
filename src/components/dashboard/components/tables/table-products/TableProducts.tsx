@@ -130,46 +130,49 @@ const TableProducts = ({
                 </thead>
 
                 <tbody className="divide-y divide-gray-200">
-                  {data.products.sort().map((product) => (
-                    <tr
-                      key={product.id}
-                      className="group hover:bg-gray-50/50 transition-colors duration-200"
-                    >
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <Image
-                            priority
-                            src={product.image_product}
-                            alt="Imagen del producto"
-                            width={50}
-                            height={50}
-                            style={{ width: "auto", height: "auto" }}
-                            className="rounded-lg"
-                          />
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-gray-600">{product.title}</span>
-                      </td>
+                  {data.products
+                    .sort((a, b) => a.id - b.id)
+                    .map((product) => (
+                      <tr
+                        key={product.id}
+                        className="group hover:bg-gray-50/50 transition-colors duration-200"
+                      >
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <Image
+                              priority
+                              src={product.image_product}
+                              alt="Imagen del producto"
+                              width={50}
+                              height={50}
+                              style={{ width: "auto", height: "auto" }}
+                              className="rounded-lg"
+                            />
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="text-gray-600">{product.title}</span>
+                        </td>
 
-                      <td className="px-6 py-4">
-                        <span className="text-gray-600">{product.price}</span>
-                      </td>
-                      <td className="px-3 w-0">
-                        <div className="flex items-center justify-between gap-2">
-                          {!attributeList(product.attributes).length ? (
-                            <div className="w-[150px] ml-3">
-                              <span className="text-gray-600 text-sm">
-                                Sin atributos
-                              </span>
-                            </div>
-                          ) : (
-                            <div className="flex items-center">
-                              {coco(product.id) ? (
-                                <div className="container-attributes">
-                                  {coco(product.id) === "Color"
-                                    ? product.attributes[coco(product.id)]?.map(
-                                        (item: any, index) => (
+                        <td className="px-6 py-4">
+                          <span className="text-gray-600">{product.price}</span>
+                        </td>
+                        <td className="px-3 w-0">
+                          <div className="flex items-center justify-between gap-2">
+                            {!attributeList(product.attributes).length ? (
+                              <div className="w-[150px] ml-3">
+                                <span className="text-gray-600 text-sm">
+                                  Sin atributos
+                                </span>
+                              </div>
+                            ) : (
+                              <div className="flex items-center">
+                                {coco(product.id) ? (
+                                  <div className="container-attributes">
+                                    {coco(product.id) === "Color"
+                                      ? product.attributes[
+                                          coco(product.id)
+                                        ]?.map((item: any, index) => (
                                           <div
                                             key={index}
                                             style={{
@@ -177,88 +180,87 @@ const TableProducts = ({
                                             }}
                                             className={`rounded-full w-4 h-4`}
                                           />
-                                        )
-                                      )
-                                    : product.attributes[coco(product.id)]?.map(
-                                        (item: any, index) => (
+                                        ))
+                                      : product.attributes[
+                                          coco(product.id)
+                                        ]?.map((item: any, index) => (
                                           <div key={index} className="burble">
                                             {item}
                                           </div>
-                                        )
-                                      )}
-                                </div>
-                              ) : (
-                                <div className="w-[150px]">
-                                  <span className="text-gray-600 text-sm">
-                                    Selecciona un atributo
-                                  </span>
-                                </div>
-                              )}
+                                        ))}
+                                  </div>
+                                ) : (
+                                  <div className="w-[150px]">
+                                    <span className="text-gray-600 text-sm">
+                                      Selecciona un atributo
+                                    </span>
+                                  </div>
+                                )}
 
-                              <DropdownMenu
-                                id={product.id}
-                                addDynamicProperty={addDynamicProperty}
-                                itemSelected={coco(product.id)}
-                                menuItems={attributeList(product.attributes)}
-                              />
-                            </div>
-                          )}
-                        </div>
-                      </td>
-
-                      <td className="px-6 py-4">
-                        <span className="text-gray-600">
-                          {product.description}
-                        </span>
-                      </td>
-
-                      <td className="px-6 py-4">
-                        <span className="text-gray-600">
-                          {product.discount}%
-                        </span>
-                      </td>
-
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3 overflow-auto">
-                          {product.images.length ? (
-                            product.images.map(
-                              (image: string, index: number) => (
-                                <Image
-                                  priority
-                                  key={index}
-                                  src={image}
-                                  alt="Imagen del producto"
-                                  width={30}
-                                  height={30}
-                                  style={{ width: "auto", height: "auto" }}
-                                  className="rounded-lg"
+                                <DropdownMenu
+                                  id={product.id}
+                                  addDynamicProperty={addDynamicProperty}
+                                  itemSelected={coco(product.id)}
+                                  menuItems={attributeList(product.attributes)}
                                 />
-                              )
-                            )
-                          ) : (
-                            <span>Sin imagenes</span>
-                          )}
-                        </div>
-                      </td>
+                              </div>
+                            )}
+                          </div>
+                        </td>
 
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex justify-end gap-3">
-                          <PenLine
-                            size={17}
-                            color="#3D5300"
-                            className="cursor-pointer"
-                            onClick={() => openModal(product)}
-                          />
-                          <Trash2
-                            size={17}
-                            color="#FA4032"
-                            className="cursor-pointer"
-                            onClick={() => onOpen(product.id)}
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                        <td className="px-6 py-4">
+                          <span className="text-gray-600">
+                            {product.description}
+                          </span>
+                        </td>
+
+                        <td className="px-6 py-4">
+                          <span className="text-gray-600">
+                            {product.discount}%
+                          </span>
+                        </td>
+
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3 overflow-auto">
+                            {product.images.length ? (
+                              product.images.map(
+                                (image: string, index: number) => (
+                                  <Image
+                                    priority
+                                    key={index}
+                                    src={image}
+                                    alt="Imagen del producto"
+                                    width={30}
+                                    height={30}
+                                    style={{ width: "auto", height: "auto" }}
+                                    className="rounded-lg"
+                                  />
+                                )
+                              )
+                            ) : (
+                              <span>Sin imagenes</span>
+                            )}
+                          </div>
+                        </td>
+
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex justify-end gap-3">
+                            <PenLine
+                              size={17}
+                              color="#3D5300"
+                              className="cursor-pointer"
+                              onClick={() => openModal(product)}
+                            />
+                            <Trash2
+                              size={17}
+                              color="#FA4032"
+                              className="cursor-pointer"
+                              onClick={() => onOpen(product.id)}
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             ) : (

@@ -95,61 +95,63 @@ const TableAttribute = ({
                 </thead>
 
                 <tbody className="divide-y divide-gray-200">
-                  {data.attributes.map((attribute) => (
-                    <tr
-                      key={attribute.id}
-                      className="group hover:bg-gray-50/50 transition-colors duration-200"
-                    >
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <span className="font-medium text-gray-900">
-                            {attribute.attribute_name}
+                  {data.attributes
+                    .sort((a, b) => a.id - b.id)
+                    .map((attribute) => (
+                      <tr
+                        key={attribute.id}
+                        className="group hover:bg-gray-50/50 transition-colors duration-200"
+                      >
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <span className="font-medium text-gray-900">
+                              {attribute.attribute_name}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="text-gray-600">
+                            {attribute.attribute_type}
                           </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-gray-600">
-                          {attribute.attribute_type}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 flex gap-2">
-                        {attribute.value.map((item: any, index) => {
-                          if (typeof item === "string") {
-                            return (
-                              <div key={index} className="burble">
-                                {item}
-                              </div>
-                            );
-                          } else {
-                            return (
-                              <div
-                                key={index}
-                                style={{ backgroundColor: item.color }}
-                                className={`rounded-full w-4 h-4`}
-                              />
-                            );
-                          }
-                        })}
-                      </td>
+                        </td>
+                        <td className="px-6 py-4 flex gap-2">
+                          {attribute.value.map((item: any, index) => {
+                            if (typeof item === "string") {
+                              return (
+                                <div key={index} className="burble">
+                                  {item}
+                                </div>
+                              );
+                            } else {
+                              return (
+                                <div
+                                  key={index}
+                                  style={{ backgroundColor: item.color }}
+                                  className={`rounded-full w-4 h-4`}
+                                />
+                              );
+                            }
+                          })}
+                        </td>
 
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex justify-end gap-3">
-                          <PenLine
-                            size={17}
-                            color="#3D5300"
-                            className="cursor-pointer"
-                            onClick={() => openModal(attribute)}
-                          />
-                          <Trash2
-                            size={17}
-                            color="#FA4032"
-                            className="cursor-pointer"
-                            onClick={() => onOpen(attribute.id)}
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex justify-end gap-3">
+                            <PenLine
+                              size={17}
+                              color="#3D5300"
+                              className="cursor-pointer"
+                              onClick={() => openModal(attribute)}
+                            />
+                            <Trash2
+                              size={17}
+                              color="#FA4032"
+                              className="cursor-pointer"
+                              onClick={() => onOpen(attribute.id)}
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             ) : (

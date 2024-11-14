@@ -228,9 +228,14 @@ const ModalProduct = ({
             cleanField();
             onClose();
           }
-        } catch (error) {
-          console.log("error", error);
-          toast.error("Error inesperado al crear el producto");
+        } catch (error: any) {
+          if (error.response.data.message.includes("La imagen con el nombre")) {
+            toast.error(
+              "Una o algunas de las imágenes que intentas subir ya existen en tu galería"
+            );
+          } else {
+            toast.error("Error inesperado al crear el producto");
+          }
         }
       } else {
         toast.error("Ya existe un producto con el mismo titulo");
