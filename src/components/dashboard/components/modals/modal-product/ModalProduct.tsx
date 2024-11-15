@@ -30,6 +30,7 @@ import {
   ValuesAttributes,
 } from "@/interfaces";
 import { convertPrice } from "@/functions";
+import ModalImages from "../modal-images/ModalImages";
 
 interface Props {
   currentPage: number;
@@ -51,6 +52,8 @@ const ModalProduct = ({
   const { refetch } = useQueryProducts(currentPage);
   const selectedType = useRef("");
   const [value, setValue] = useState({ valueString: "", valueObject: "" });
+  const [optionImage, setOptionImage] = useState(0);
+  const [activeModal, setActiveModal] = useState(false);
   const [valuesForm, setValuesForm] = useState({
     title: "",
     price: "",
@@ -68,6 +71,7 @@ const ModalProduct = ({
   const [attributeValue, setAttributeValue] = useState<AttributeValues>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const inputRefImage = useRef<HTMLInputElement | null>(null);
   const [productImages, setProductImages] = useState<
     { url: string; name: string }[]
   >([]);
@@ -76,6 +80,14 @@ const ModalProduct = ({
     useMutationUpdatedProduct();
   const { data } = useQueryAttribute(currentPage);
   const { data: products } = useQueryProducts(currentPage);
+
+  useEffect(() => {
+    if (optionImage === 1) {
+      inputRefImage.current?.click();
+      setOptionImage(0);
+      setActiveModal(false);
+    }
+  }, [optionImage]);
 
   useEffect(() => {
     if (data && data?.attributes?.length) {
@@ -264,17 +276,8 @@ const ModalProduct = ({
       if (event.target.files && event.target.files.length > 0) {
         const file = event.target.files[0];
 
-        // Validar extensión de archivo
-        const allowedExtensions = [
-          "image/png",
-          "image/jpeg",
-          "image/jpg",
-          "image/webp",
-        ];
-        if (!allowedExtensions.includes(file.type)) {
-          toast.error(
-            "Solo se pueden subir imágenes en formato PNG, JPG o WEBP"
-          );
+        if (file.size > 2000000) {
+          toast.error("La imagen supera el tamaño máximo, que son 2 MB");
           return;
         } else {
           setSelectedFile(file);
@@ -349,6 +352,12 @@ const ModalProduct = ({
   return (
     active && (
       <section className={classes["container-modal"]}>
+        <ModalImages
+          active={activeModal}
+          onClose={() => setActiveModal(false)}
+          optionImage={optionImage}
+          setOptionImage={setOptionImage}
+        />
         <form
           className={classes["form-modal"]}
           onSubmit={handleSubmit}
@@ -388,15 +397,16 @@ const ModalProduct = ({
                   </button>
                 </div>
               ) : (
-                <div className="relative">
+                <div className="relative" onClick={() => setActiveModal(true)}>
                   <div className={classes.capa}>
                     <ImageUp size={60} strokeWidth={1} />
                   </div>
+
                   <input
                     type="file"
-                    accept=".jpg, .jpeg, .png, .webp"
-                    value={undefined}
-                    className={classes["container-image"]}
+                    disabled={optionImage !== 1}
+                    ref={inputRefImage}
+                    style={{ display: "none" }}
                     onChange={handleFileChange}
                   />
                 </div>

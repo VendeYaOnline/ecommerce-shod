@@ -25,16 +25,6 @@
   animation: fadeUp 500ms ease;
 }
 
-.container-image {
-  width: 150px;
-  height: 150px;
-  border-radius: 10px;
-  position: absolute;
-  top: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-
 .container-image-products {
   width: 80px;
   height: 80px;
