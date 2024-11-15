@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAttributes, getProducts } from "./request";
+import { getAttributes, getImages, getProducts } from "./request";
 
 export const useQueryAttribute = (currentPage: number) => {
   return useQuery({
@@ -12,5 +12,12 @@ export const useQueryProducts = (currentPage: number) => {
   return useQuery({
     queryKey: ["products", currentPage],
     queryFn: () => getProducts(currentPage),
+  });
+};
+
+export const useQueryImages = (currentPage: number) => {
+  return useQuery({
+    queryKey: ["iamges", currentPage],
+    queryFn: () => getImages(currentPage),
   });
 };

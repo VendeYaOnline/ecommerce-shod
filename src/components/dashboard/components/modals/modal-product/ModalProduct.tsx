@@ -265,7 +265,12 @@ const ModalProduct = ({
         const file = event.target.files[0];
 
         // Validar extensión de archivo
-        const allowedExtensions = ["image/png", "image/jpeg", "image/webp"];
+        const allowedExtensions = [
+          "image/png",
+          "image/jpeg",
+          "image/jpg",
+          "image/webp",
+        ];
         if (!allowedExtensions.includes(file.type)) {
           toast.error(
             "Solo se pueden subir imágenes en formato PNG, JPG o WEBP"
@@ -287,7 +292,12 @@ const ModalProduct = ({
         const file = event.target.files[0];
 
         // Validar extensión de archivo
-        const allowedExtensions = ["image/png", "image/jpeg", "image/webp"];
+        const allowedExtensions = [
+          "image/png",
+          "image/jpeg",
+          "image/jpg",
+          "image/webp",
+        ];
         if (!allowedExtensions.includes(file.type)) {
           toast.error(
             "Solo se pueden subir imágenes en formato PNG, JPG o WEBP"
@@ -384,6 +394,7 @@ const ModalProduct = ({
                   </div>
                   <input
                     type="file"
+                    accept=".jpg, .jpeg, .png, .webp"
                     value={undefined}
                     className={classes["container-image"]}
                     onChange={handleFileChange}
@@ -534,6 +545,7 @@ const ModalProduct = ({
                 </div>
                 <input
                   type="file"
+                  accept=".jpg, .jpeg, .png, .webp"
                   className={classes["container-image-products"]}
                   onChange={handleUpImages}
                 />

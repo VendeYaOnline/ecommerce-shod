@@ -5,6 +5,7 @@ import {
   Mail,
   ShoppingCart,
   PencilRuler,
+  Images,
 } from "lucide-react";
 import { SidebarLink } from "./SidebarLink";
 import { Dispatch, SetStateAction } from "react";
@@ -23,10 +24,11 @@ export function Sidebar({ view, setView }: Props) {
 
       <nav className="space-y-3">
         <p className="text-sm text-gray-500 mb-4">Menu</p>
+
         <SidebarLink
           selectItem={() => setView(1)}
           icon={<ShoppingCart size={20} />}
-          text="Ventas"
+          text="Ventas efectuadas"
           active={view === 1}
         />
         <SidebarLink
@@ -35,13 +37,6 @@ export function Sidebar({ view, setView }: Props) {
           selectItem={() => setView(2)}
           active={view === 2}
         />
-
-        <SidebarLink
-          icon={<PencilRuler size={20} />}
-          text="Atributos"
-          selectItem={() => setView(3)}
-          active={view === 3}
-        />
         <SidebarLink
           icon={<Mail size={20} />}
           text="Contacto"
@@ -49,10 +44,23 @@ export function Sidebar({ view, setView }: Props) {
           active={view === 4}
         />
         <SidebarLink
+          icon={<PencilRuler size={20} />}
+          text="Atributos"
+          selectItem={() => setView(3)}
+          active={view === 3}
+        />
+        <SidebarLink
           icon={<FileText size={20} />}
           text="Banner"
           selectItem={() => setView(5)}
           active={view === 5}
+        />
+
+        <SidebarLink
+          icon={<Images size={20} />}
+          text="Galeria"
+          selectItem={() => setView(6)}
+          active={view === 6}
         />
       </nav>
 
@@ -60,8 +68,8 @@ export function Sidebar({ view, setView }: Props) {
         <SidebarLink
           icon={<Settings size={20} />}
           text="Configuraciones"
-          selectItem={() => setView(6)}
-          active={view === 6}
+          selectItem={() => setView(7)}
+          active={view === 7}
         />
         {/*   <SidebarLink icon={<HelpCircle size={20} />} text="Help & Support" /> */}
       </div>

@@ -40,6 +40,18 @@ export interface AttributeFind {
   totalPages: number;
 }
 
+export interface ImagesFind {
+  images: {
+    Key: string;
+    LastModified: string;
+    Size: number;
+    Url: string;
+  }[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
 export interface ProductFind {
   products: ProductsResponse[];
   total: number;
@@ -47,7 +59,13 @@ export interface ProductFind {
   totalPages: number;
 }
 
-export type TpeValue = "Color" | "Talla" | "Peso" | "Dimensión" | "Mililitro" | "Género";
+export type TpeValue =
+  | "Color"
+  | "Talla"
+  | "Peso"
+  | "Dimensión"
+  | "Mililitro"
+  | "Género";
 
 export interface ValuesAttributes {
   Talla: string[];

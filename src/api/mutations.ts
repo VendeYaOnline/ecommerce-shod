@@ -6,6 +6,7 @@ import {
   createProduct,
   updatedProduct,
   deleteProduct,
+  uploadImages,
 } from "./request";
 
 // * ATRIBUTOS
@@ -34,4 +35,8 @@ export const useMutationUpdatedProduct = () => {
 
 export const useMutationDeleteProduct = () => {
   return useMutation({ mutationFn: deleteProduct });
+};
+
+export const useMutationImages = () => {
+  return useMutation({ mutationFn: uploadImages });
 };

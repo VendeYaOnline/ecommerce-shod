@@ -10,6 +10,7 @@ import {
   Banner,
   Attributes,
   Settings,
+  Gallery,
 } from "./views";
 
 function DashBoard() {
@@ -31,8 +32,10 @@ function DashBoard() {
 
       case 5:
         return <Banner />;
-
       case 6:
+        return <Gallery />;
+
+      case 7:
         return <Settings />;
     }
   };

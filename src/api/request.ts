@@ -2,6 +2,7 @@ import {
   AttributeData,
   AttributeFind,
   AttributeUpdated,
+  ImagesFind,
   ProductFind,
   ValuesAttributes,
 } from "@/interfaces";
@@ -62,4 +63,21 @@ export const updatedProduct = async ({
 
 export const deleteProduct = async (idElement: number) => {
   return axiosConfig.delete(`/delete-product/${idElement}`);
+};
+
+//* IMAGES
+
+export const uploadImages = async (data: FormData) => {
+  console.log("data", data.get("images"));
+  return axiosConfig.post("/upload-images", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+export const getImages = async (page: number) => {
+  const result = (await axiosConfig.get<ImagesFind>(`/get-images?page=${page}`))
+    .data;
+  return result;
 };
