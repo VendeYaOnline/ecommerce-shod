@@ -1,4 +1,4 @@
-import { ImagePlus, Images, Search, X } from "lucide-react";
+import { ImagePlus, Images } from "lucide-react";
 import Button from "../../components/button/Button";
 import classes from "./Gallery.module.css";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -115,7 +115,7 @@ const Gallery = () => {
             style={{ display: "none" }}
             onChange={handleUpImages}
           />
-          <Button onClik={handleButtonClick}>
+          <Button onClik={handleButtonClick} disabled={data?.total === 600}>
             Cargar imagenes
             <ImagePlus />
           </Button>

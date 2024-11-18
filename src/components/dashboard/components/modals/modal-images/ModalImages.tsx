@@ -1,18 +1,12 @@
 "use client";
 
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import classes from "./ModalImages.module.css";
-import { CircleX, Images, MonitorUp, Search } from "lucide-react";
+import { CircleX, Images, MonitorUp } from "lucide-react";
 import { useQueryImages } from "@/api/queries";
 import Image from "next/image";
 import Input from "../../input/Input";
-import Button from "../../button/Button";
 import Pagination from "../../pagination/Pagination";
-
-interface ValueImage {
-  url: string;
-  name: string;
-}
 
 interface Props {
   active: boolean;

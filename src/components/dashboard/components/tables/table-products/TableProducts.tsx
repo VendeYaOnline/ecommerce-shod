@@ -190,7 +190,7 @@ const TableProducts = ({
                                         ))}
                                   </div>
                                 ) : (
-                                  <div className="w-[150px]">
+                                  <div className="w-[150px] ml-3">
                                     <span className="text-gray-600 text-sm">
                                       Selecciona un atributo
                                     </span>
