@@ -138,7 +138,7 @@ const TableProducts = ({
                         className="group hover:bg-gray-50/50 transition-colors duration-200"
                       >
                         <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
+                          <div className="skeleton-loader-image">
                             <Image
                               priority
                               src={product.image_product}

@@ -1,7 +1,7 @@
 .container-gallery {
   margin-top: 20px;
   border-radius: 10px;
-  height: 500px;
+  height: auto;
   overflow: auto;
   padding: 10px;
   background: rgba(255, 255, 255, 0.28);
@@ -9,12 +9,12 @@
   backdrop-filter: blur(4.7px);
   -webkit-backdrop-filter: blur(4.7px);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  overflow: hidden;
 }
 
 .container-images {
+  max-height: 500px;
   display: flex;
-  gap: 11px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
