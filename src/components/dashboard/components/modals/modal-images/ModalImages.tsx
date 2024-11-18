@@ -1,12 +1,13 @@
 "use client";
 
-import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import classes from "./ModalImages.module.css";
-import { CircleX, Images, MonitorUp } from "lucide-react";
+import { CircleX, Images, MonitorUp, Search } from "lucide-react";
 import { useQueryImages } from "@/api/queries";
 import Image from "next/image";
 import Input from "../../input/Input";
 import Button from "../../button/Button";
+import Pagination from "../../pagination/Pagination";
 
 interface ValueImage {
   url: string;
@@ -30,13 +31,11 @@ const ModalImages = ({
 }: Props) => {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const { data, refetch, isPending, isFetching } = useQueryImages(
-    currentPage,
-    search
-  );
+  const { data, refetch, isFetching } = useQueryImages(currentPage, search);
   const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     onClose();
+    setSearch("");
     setOptionImage(0);
   };
 
@@ -62,6 +61,13 @@ const ModalImages = ({
     setImagePreview(imageUrl);
   };
 
+  useEffect(() => {
+    const time = setTimeout(() => {
+      refetch();
+    }, 500);
+    return () => clearTimeout(time);
+  }, [search, refetch]);
+
   return (
     active && (
       <section
@@ -80,6 +86,7 @@ const ModalImages = ({
             className="absolute right-5 cursor-pointer"
             onClick={() => {
               onClose();
+              setSearch("");
               setOptionImage(0);
             }}
           />
@@ -94,14 +101,6 @@ const ModalImages = ({
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
-              <Button
-                disabled={isPending || isFetching}
-                onClik={() => {
-                  refetch(), setCurrentPage(1);
-                }}
-              >
-                Buscar
-              </Button>
             </div>
           )}
 
@@ -141,51 +140,22 @@ const ModalImages = ({
                   </div>
                 ))}
 
-              {(!isFetching || !isFetching) && data?.images.length === 0 && (
+              {!isFetching && data?.images.length === 0 && (
                 <div className="w-full h-[150px] flex justify-center items-center flex-col gap-5">
                   <h2 className="text-lg">No hay imagenes</h2>
                   <Images size={50} />
                 </div>
               )}
 
-              <div className="w-full">
-                {data && !isFetching && !isPending && data.totalPages > 0 && (
-                  <nav className="flex items-center justify-center space-x-2 mt-4">
-                    <button
-                      className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:outline-none"
-                      onClick={handlePrevPage}
-                      disabled={currentPage === 1}
-                    >
-                      Anterior
-                    </button>
-
-                    {Array.from(
-                      { length: data?.totalPages || 0 },
-                      (_, index) => (
-                        <button
-                          key={index}
-                          className={`px-3 py-2 rounded-md text-sm font-medium ${
-                            currentPage === index + 1
-                              ? "text-white bg-indigo-600"
-                              : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
-                          }`}
-                          onClick={() => setCurrentPage(index + 1)}
-                        >
-                          {index + 1}
-                        </button>
-                      )
-                    )}
-
-                    <button
-                      className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:outline-none"
-                      onClick={handleNextPage}
-                      disabled={currentPage === data.totalPages}
-                    >
-                      Siguiente
-                    </button>
-                  </nav>
-                )}
-              </div>
+              {data && data.images.length > 0 && (
+                <Pagination
+                  currentPage={currentPage}
+                  handleNextPage={handleNextPage}
+                  handlePrevPage={handlePrevPage}
+                  setCurrentPage={setCurrentPage}
+                  totalPages={data.totalPages}
+                />
+              )}
             </div>
           ) : (
             <div className="flex justify-center gap-5">

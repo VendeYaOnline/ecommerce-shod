@@ -1,4 +1,4 @@
-import { ImagePlus } from "lucide-react";
+import { ImagePlus, Images, Search, X } from "lucide-react";
 import Button from "../../components/button/Button";
 import classes from "./Gallery.module.css";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -8,6 +8,8 @@ import Image from "next/image";
 import { useMutationImages } from "@/api/mutations";
 import { useQueryImages } from "@/api/queries";
 import { ModalUploadImages } from "../../components/modals";
+import Pagination from "../../components/pagination/Pagination";
+import Input from "../../components/input/Input";
 
 const Gallery = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -15,7 +17,13 @@ const Gallery = () => {
   const { mutateAsync, isPending } = useMutationImages();
   const [openModal, setOpenModal] = useState(false);
   const [images, setImages] = useState<{ url: string; name: string }[]>([]);
-  const { data, refetch } = useQueryImages(currentPage);
+  const [search, setSearch] = useState("");
+  const {
+    data,
+    refetch,
+    isFetching,
+    isPending: isPending2,
+  } = useQueryImages(currentPage, search);
   const refImages = useRef<File[]>([]);
 
   const handleButtonClick = useCallback(async () => {
@@ -73,6 +81,18 @@ const Gallery = () => {
     setImages([]);
   };
 
+  useEffect(() => {
+    if (search === "") {
+      return;
+    }
+
+    const time = setTimeout(() => {
+      refetch();
+    }, 500);
+
+    return () => clearTimeout(time);
+  }, [search, refetch]);
+
   return (
     <>
       <ModalUploadImages
@@ -85,18 +105,31 @@ const Gallery = () => {
         mutateAsync={mutateAsync}
         refetch={refetch}
       />
-      <input
-        type="file"
-        multiple
-        accept=".jpg, .jpeg, .png, .webp"
-        ref={fileInputRef}
-        style={{ display: "none" }}
-        onChange={handleUpImages}
-      />
-      <Button onClik={handleButtonClick}>
-        Cargar imagenes
-        <ImagePlus />
-      </Button>
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <div>
+          <input
+            type="file"
+            multiple
+            accept=".jpg, .jpeg, .png, .webp"
+            ref={fileInputRef}
+            style={{ display: "none" }}
+            onChange={handleUpImages}
+          />
+          <Button onClik={handleButtonClick}>
+            Cargar imagenes
+            <ImagePlus />
+          </Button>
+        </div>
+
+        <div className="flex">
+          <Input
+            placeholder="Buscar imagen"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+      </div>
+
       <div
         className={classes["container-gallery"]}
         style={{
@@ -104,8 +137,22 @@ const Gallery = () => {
           alignItems: images.length ? "flex-start" : "center",
         }}
       >
+        {isFetching && (
+          <div className="w-full h-full flex justify-center items-center">
+            <div className="loader-3" />
+          </div>
+        )}
+        {(!isFetching || !isPending2) && data?.images.length === 0 && (
+          <div className="w-full h-full flex justify-center items-center flex-col gap-5">
+            <h2 className="text-lg">No hay imagenes</h2>
+            <Images size={50} />
+          </div>
+        )}
+
         <div className={classes["container-images"]}>
-          {data?.images.length ? (
+          {data &&
+            !isFetching &&
+            data?.images.length > 0 &&
             data.images.map((image, index) => (
               <div key={index} className={classes["skeleton-loader"]}>
                 <Image
@@ -128,46 +175,17 @@ const Gallery = () => {
                   }}
                 />
               </div>
-            ))
-          ) : (
-            <div className="w-full h-[450px] flex justify-center items-center">
-              <div className="loader-3" />
-            </div>
-          )}
+            ))}
         </div>
       </div>
-      {data && data.totalPages > 0 && (
-        <nav className="flex items-center justify-center space-x-2 mt-4">
-          <button
-            className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:outline-none"
-            onClick={handlePrevPage}
-            disabled={currentPage === 1}
-          >
-            Anterior
-          </button>
-
-          {Array.from({ length: data?.totalPages || 0 }, (_, index) => (
-            <button
-              key={index}
-              className={`px-3 py-2 rounded-md text-sm font-medium ${
-                currentPage === index + 1
-                  ? "text-white bg-indigo-600"
-                  : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
-              }`}
-              onClick={() => setCurrentPage(index + 1)}
-            >
-              {index + 1}
-            </button>
-          ))}
-
-          <button
-            className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:outline-none"
-            onClick={handleNextPage}
-            disabled={currentPage === data.totalPages}
-          >
-            Siguiente
-          </button>
-        </nav>
+      {data && data.images.length > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          handleNextPage={handleNextPage}
+          handlePrevPage={handlePrevPage}
+          setCurrentPage={setCurrentPage}
+          totalPages={data.totalPages}
+        />
       )}
     </>
   );
