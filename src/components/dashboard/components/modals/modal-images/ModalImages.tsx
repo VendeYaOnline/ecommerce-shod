@@ -25,7 +25,7 @@ const ModalImages = ({
 }: Props) => {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const { data, refetch, isFetching } = useQueryImages(currentPage, search);
+  const { data, refetch, isFetching } = useQueryImages(currentPage, search, 10);
   const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     onClose();

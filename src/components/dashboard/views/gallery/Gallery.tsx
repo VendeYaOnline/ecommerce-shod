@@ -23,7 +23,7 @@ const Gallery = () => {
     refetch,
     isFetching,
     isPending: isPending2,
-  } = useQueryImages(currentPage, search);
+  } = useQueryImages(currentPage, search, 40);
   const refImages = useRef<File[]>([]);
 
   const handleButtonClick = useCallback(async () => {

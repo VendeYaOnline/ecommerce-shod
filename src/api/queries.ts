@@ -15,10 +15,14 @@ export const useQueryProducts = (currentPage: number) => {
   });
 };
 
-export const useQueryImages = (currentPage: number, search: string) => {
+export const useQueryImages = (
+  currentPage: number,
+  search: string,
+  limit: number
+) => {
   return useQuery({
-    queryKey: ["iamges", currentPage],
-    queryFn: () => getImages(currentPage, search),
+    queryKey: ["images", currentPage],
+    queryFn: () => getImages(currentPage, search, limit),
     refetchOnWindowFocus: false,
   });
 };

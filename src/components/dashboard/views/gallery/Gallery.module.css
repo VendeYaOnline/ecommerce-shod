@@ -14,7 +14,7 @@
 
 .container-images {
   display: flex;
-  gap: 8px;
+  gap: 11px;
   flex-wrap: wrap;
 }
 

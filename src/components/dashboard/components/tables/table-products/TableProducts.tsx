@@ -143,9 +143,13 @@ const TableProducts = ({
                               priority
                               src={product.image_product}
                               alt="Imagen del producto"
-                              width={50}
-                              height={50}
-                              style={{ width: "auto", height: "auto" }}
+                              width={80}
+                              height={80}
+                              style={{
+                                width: 80,
+                                height: 80,
+                                objectFit: "cover",
+                              }}
                               className="rounded-lg"
                             />
                           </div>
