@@ -58,12 +58,12 @@
 
 @media (max-width: 524px) {
   .form-modal-1 {
-    width: 100%;
+    width: 90%;
     margin: 20px;
   }
 
   .form-modal-2 {
-    width: 100%;
+    width: 90%;
     margin: 20px;
   }
 }
@@ -71,13 +71,6 @@
 @media (max-width: 503px) {
   .container-images {
     justify-content: center;
-  }
-}
-
-@media (max-width: 650px) {
-  .form-modal-2 {
-    width: auto;
-    margin: 20px;
   }
 }
 

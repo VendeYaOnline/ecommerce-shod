@@ -183,6 +183,7 @@ const ModalProduct = ({
         if (!isValid()) {
           const formData = new FormData();
           formData.append("file", selectedFile!);
+          formData.append("image_file", imagePreview || "");
           imagesProducts.current.forEach((file) => {
             formData.append("images", file);
           });
@@ -222,6 +223,7 @@ const ModalProduct = ({
           if (!isValid()) {
             const formData = new FormData();
             formData.append("file", selectedFile!);
+            formData.append("image_file", imagePreview || "");
             formData.append(
               "images",
               productImages.length
@@ -353,6 +355,7 @@ const ModalProduct = ({
     active && (
       <section className={classes["container-modal"]}>
         <ModalImages
+          setImagePreview={setImagePreview}
           active={activeModal}
           onClose={() => setActiveModal(false)}
           optionImage={optionImage}
@@ -404,6 +407,7 @@ const ModalProduct = ({
 
                   <input
                     type="file"
+                    accept=".jpg, .jpeg, .png, .webp"
                     disabled={optionImage !== 1}
                     ref={inputRefImage}
                     style={{ display: "none" }}

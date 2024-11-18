@@ -76,8 +76,11 @@ export const uploadImages = async (data: FormData) => {
   });
 };
 
-export const getImages = async (page: number) => {
-  const result = (await axiosConfig.get<ImagesFind>(`/get-images?page=${page}`))
-    .data;
+export const getImages = async (page: number, search: string) => {
+  const result = (
+    await axiosConfig.get<ImagesFind>(
+      `/get-images?page=${page}&search=${search}`
+    )
+  ).data;
   return result;
 };
