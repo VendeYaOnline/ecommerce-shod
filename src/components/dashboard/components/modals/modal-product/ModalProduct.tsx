@@ -2,7 +2,7 @@
 
 import Button from "../../button/Button";
 import classes from "./ModalProduct.module.css";
-import { CircleX, ImageUp } from "lucide-react";
+import { CircleX, ImageUp, Images } from "lucide-react";
 import Input from "../../input/Input";
 import Select from "../../select/Select";
 import Textarea from "../../textarea/Textarea";
@@ -396,7 +396,8 @@ const ModalProduct = ({
                     className={classes["button-delete-img"]}
                     onClick={deleteImage}
                   >
-                    Eliminar imagen
+                    Remover
+                    <Images size={15} />
                   </button>
                 </div>
               ) : (
