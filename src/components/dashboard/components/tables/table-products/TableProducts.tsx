@@ -229,16 +229,22 @@ const TableProducts = ({
                             {product.images.length ? (
                               product.images.map(
                                 (image: string, index: number) => (
-                                  <Image
-                                    priority
-                                    key={index}
-                                    src={image}
-                                    alt="Imagen del producto"
-                                    width={30}
-                                    height={30}
-                                    style={{ width: "auto", height: "auto" }}
-                                    className="rounded-lg"
-                                  />
+                                  <div className="skeleton-loader-image-table">
+                                    <Image
+                                      priority
+                                      key={index}
+                                      src={image}
+                                      alt="Imagen del producto"
+                                      width={40}
+                                      height={40}
+                                      style={{
+                                        width: 40,
+                                        height: 40,
+                                        objectFit: "cover",
+                                      }}
+                                      className="rounded-lg"
+                                    />
+                                  </div>
                                 )
                               )
                             ) : (

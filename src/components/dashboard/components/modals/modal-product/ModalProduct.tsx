@@ -49,6 +49,7 @@ const ModalProduct = ({
 }: Props) => {
   const [selectedAttribute, setSelectedAttribute] = useState("");
   const imagesProducts = useRef<File[]>([]);
+  const imagesUrls = useRef<string[]>([]);
   const { refetch } = useQueryProducts(currentPage);
   const selectedType = useRef("");
   const [value, setValue] = useState({ valueString: "", valueObject: "" });
@@ -177,6 +178,7 @@ const ModalProduct = ({
     imagesProducts.current = [];
     setProductImages([]);
     selectedItem.current = undefined;
+    imagesUrls.current = [];
   }, []);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -197,6 +199,14 @@ const ModalProduct = ({
               ? JSON.stringify(selectedItem.current?.images)
               : "[]"
           );
+
+          formData.append(
+            "urls_gallery",
+            imagesUrls.current.length
+              ? JSON.stringify(imagesUrls.current)
+              : "[]"
+          );
+
           formData.append("attributes", JSON.stringify(valuesAttributes));
           // Agrega el resto de los valores del formulario
           Object.entries(valuesForm).forEach(([key, value]) => {
@@ -231,6 +241,13 @@ const ModalProduct = ({
             imagesProducts.current.forEach((file) => {
               formData.append("images", file);
             });
+
+            formData.append(
+              "urls_gallery",
+              imagesUrls.current.length
+                ? JSON.stringify(imagesUrls.current)
+                : "[]"
+            );
 
             formData.append("attributes", JSON.stringify(valuesAttributes));
             // Agrega el resto de los valores del formulario
@@ -329,8 +346,6 @@ const ModalProduct = ({
     },
     [productImages, imagesProducts.current]
   );
-  console.log("productImages", productImages);
-  console.log("imagesProducts.current", imagesProducts.current);
   const deleteImageProduct = useCallback(
     (image: { url: string; name: string }) => {
       if (image.url.includes("https")) {
@@ -363,6 +378,9 @@ const ModalProduct = ({
           onClose={() => setActiveModal(false)}
           optionImage={optionImage}
           setOptionImage={setOptionImage}
+          typeImage={typeImage.current}
+          imagesUrls={imagesUrls}
+          setProductImages={setProductImages}
         />
         <form
           className={classes["form-modal"]}
@@ -539,10 +557,9 @@ const ModalProduct = ({
           <section className="flex flex-wrap gap-3">
             {productImages.map((image, index) => (
               <div className="relative" key={index}>
-                <div style={{ width: 80, height: 80 }}>
+                <div className="skeleton-loader-image">
                   <img
                     src={image.url}
-                    alt="Imagen del producto"
                     className="rounded-[5px]"
                     style={{
                       objectFit: "cover",

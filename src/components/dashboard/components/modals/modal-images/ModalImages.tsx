@@ -1,6 +1,12 @@
 "use client";
 
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import {
+  Dispatch,
+  MutableRefObject,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import classes from "./ModalImages.module.css";
 import { CircleX, Images, MonitorUp } from "lucide-react";
 import { useQueryImages } from "@/api/queries";
@@ -14,6 +20,16 @@ interface Props {
   setOptionImage: Dispatch<SetStateAction<number>>;
   onClose: () => void;
   setImagePreview: (value: SetStateAction<string | null>) => void;
+  typeImage: string;
+  imagesUrls: MutableRefObject<string[]>;
+  setProductImages: Dispatch<
+    SetStateAction<
+      {
+        url: string;
+        name: string;
+      }[]
+    >
+  >;
 }
 
 const ModalImages = ({
@@ -22,6 +38,9 @@ const ModalImages = ({
   optionImage,
   setOptionImage,
   setImagePreview,
+  setProductImages,
+  typeImage,
+  imagesUrls,
 }: Props) => {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -49,9 +68,14 @@ const ModalImages = ({
   };
 
   const selectedImageGalery = (imageUrl: string) => {
+    if (typeImage === "main_image") {
+      setImagePreview(imageUrl);
+    } else {
+      imagesUrls.current = [...imagesUrls.current, imageUrl];
+      setProductImages((prev) => [...prev, { name: "", url: imageUrl }]);
+    }
     onClose();
     setOptionImage(0);
-    setImagePreview(imageUrl);
   };
 
   useEffect(() => {
