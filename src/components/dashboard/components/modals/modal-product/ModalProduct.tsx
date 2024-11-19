@@ -54,6 +54,7 @@ const ModalProduct = ({
   const [value, setValue] = useState({ valueString: "", valueObject: "" });
   const [optionImage, setOptionImage] = useState(0);
   const [activeModal, setActiveModal] = useState(false);
+  const typeImage = useRef("");
   const [valuesForm, setValuesForm] = useState({
     title: "",
     price: "",
@@ -72,6 +73,7 @@ const ModalProduct = ({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const inputRefImage = useRef<HTMLInputElement | null>(null);
+  const inputRefImages = useRef<HTMLInputElement | null>(null);
   const [productImages, setProductImages] = useState<
     { url: string; name: string }[]
   >([]);
@@ -84,6 +86,7 @@ const ModalProduct = ({
   useEffect(() => {
     if (optionImage === 1) {
       inputRefImage.current?.click();
+      inputRefImages.current?.click();
       setOptionImage(0);
       setActiveModal(false);
     }
@@ -224,12 +227,11 @@ const ModalProduct = ({
             const formData = new FormData();
             formData.append("file", selectedFile!);
             formData.append("image_file", imagePreview || "");
-            formData.append(
-              "images",
-              productImages.length
-                ? JSON.stringify(imagesProducts.current)
-                : "[]"
-            );
+
+            imagesProducts.current.forEach((file) => {
+              formData.append("images", file);
+            });
+
             formData.append("attributes", JSON.stringify(valuesAttributes));
             // Agrega el resto de los valores del formulario
             Object.entries(valuesForm).forEach(([key, value]) => {
@@ -327,7 +329,8 @@ const ModalProduct = ({
     },
     [productImages, imagesProducts.current]
   );
-
+  console.log("productImages", productImages);
+  console.log("imagesProducts.current", imagesProducts.current);
   const deleteImageProduct = useCallback(
     (image: { url: string; name: string }) => {
       if (image.url.includes("https")) {
@@ -401,15 +404,23 @@ const ModalProduct = ({
                   </button>
                 </div>
               ) : (
-                <div className="relative" onClick={() => setActiveModal(true)}>
+                <div
+                  className="relative"
+                  onClick={() => {
+                    setActiveModal(true), (typeImage.current = "main_image");
+                  }}
+                >
                   <div className={classes.capa}>
                     <ImageUp size={60} strokeWidth={1} />
                   </div>
-
                   <input
                     type="file"
                     accept=".jpg, .jpeg, .png, .webp"
-                    disabled={optionImage !== 1}
+                    disabled={
+                      optionImage === 1 && typeImage.current === "main_image"
+                        ? false
+                        : true
+                    }
                     ref={inputRefImage}
                     style={{ display: "none" }}
                     onChange={handleFileChange}
@@ -554,15 +565,29 @@ const ModalProduct = ({
             ))}
 
             {productImages.length < 5 && (
-              <div className="relative">
+              <div
+                className="relative"
+                onClick={() => {
+                  setActiveModal(true),
+                    (typeImage.current = "secondary_images");
+                }}
+              >
                 <div className={classes["capa-2"]}>
                   <ImageUp size={30} strokeWidth={1} />
                 </div>
                 <input
                   type="file"
                   accept=".jpg, .jpeg, .png, .webp"
+                  disabled={
+                    optionImage === 1 &&
+                    typeImage.current === "secondary_images"
+                      ? false
+                      : true
+                  }
+                  ref={inputRefImages}
                   className={classes["container-image-products"]}
                   onChange={handleUpImages}
+                  style={{ display: "none" }}
                 />
               </div>
             )}

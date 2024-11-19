@@ -42,7 +42,6 @@ const ModalImages = ({
       setCurrentPage(currentPage - 1);
     }
   };
-
   const handleNextPage = () => {
     if (currentPage < (data?.totalPages || 1)) {
       setCurrentPage(currentPage + 1);
@@ -56,6 +55,9 @@ const ModalImages = ({
   };
 
   useEffect(() => {
+    if (search === "") {
+      return;
+    }
     const time = setTimeout(() => {
       refetch();
     }, 500);
