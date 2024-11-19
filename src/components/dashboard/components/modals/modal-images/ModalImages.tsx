@@ -72,7 +72,8 @@ const ModalImages = ({
       setImagePreview(imageUrl);
     } else {
       imagesUrls.current = [...imagesUrls.current, imageUrl];
-      setProductImages((prev) => [...prev, { name: "", url: imageUrl }]);
+      const name = imageUrl.split("amazonaws.com/")[1];
+      setProductImages((prev) => [...prev, { name, url: imageUrl }]);
     }
     onClose();
     setOptionImage(0);

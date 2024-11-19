@@ -229,10 +229,12 @@ const TableProducts = ({
                             {product.images.length ? (
                               product.images.map(
                                 (image: string, index: number) => (
-                                  <div className="skeleton-loader-image-table">
+                                  <div
+                                    className="skeleton-loader-image-table"
+                                    key={index}
+                                  >
                                     <Image
                                       priority
-                                      key={index}
                                       src={image}
                                       alt="Imagen del producto"
                                       width={40}

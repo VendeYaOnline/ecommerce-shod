@@ -82,10 +82,6 @@ const Gallery = () => {
   };
 
   useEffect(() => {
-    if (search === "") {
-      return;
-    }
-
     const time = setTimeout(() => {
       refetch();
     }, 500);
