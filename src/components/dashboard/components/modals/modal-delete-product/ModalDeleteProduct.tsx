@@ -15,6 +15,7 @@ interface Props {
   active: boolean;
   onClose: () => void;
   idElement: number;
+  search: string;
 }
 
 const ModalDeleteProduct = ({
@@ -23,10 +24,12 @@ const ModalDeleteProduct = ({
   active,
   onClose,
   idElement,
+  search,
 }: Props) => {
   const { mutateAsync, isPending } = useMutationDeleteProduct();
   const { refetch } = useQueryProducts(
-    calculatePageAfterDeletion(totalItems - 1, 5)
+    calculatePageAfterDeletion(totalItems - 1, 5),
+    search
   );
 
   const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {

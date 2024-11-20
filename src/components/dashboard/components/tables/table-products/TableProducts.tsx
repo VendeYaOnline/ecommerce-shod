@@ -18,7 +18,7 @@ import Input from "../../input/Input";
 
 const headers = [
   "Imagen",
-  "Titulo",
+  "Título",
   "Precio",
   "Atributos",
   "Descripción",
@@ -42,11 +42,8 @@ const TableProducts = ({
   const [search, setSearch] = useState("");
   const firstLoad = useRef(false);
   const idElement = useRef(0);
-  const { data, isLoading, refetch, isFetching } = useQueryProducts(
-    currentPage,
-    search
-  );
-
+  const { data, refetch, isFetching } = useQueryProducts(currentPage, search);
+  const [noResults, setNoResults] = useState(true);
   const [attributeSelect, setAttributeSelect] = useState<
     Record<string | number, string>
   >({});
@@ -54,6 +51,14 @@ const TableProducts = ({
   const addDynamicProperty = (key: string | number, value: string) => {
     setAttributeSelect((prevState) => ({ ...prevState, [key]: value }));
   };
+  useEffect(() => {
+    if (data?.grandTotal) {
+      setNoResults(false);
+    } else {
+      setNoResults(true);
+      setSearch("");
+    }
+  }, [data?.grandTotal]);
 
   useEffect(() => {
     if (firstLoad.current) {
@@ -118,16 +123,17 @@ const TableProducts = ({
         active={active}
         onClose={onClose}
         idElement={idElement.current}
+        search={search}
       />
       <div className="mx-auto">
         <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
           <div className="p-6">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900">Productos</h2>
-
               <div className="flex gap-2 items-center">
                 <Input
-                  placeholder="Buscar producto por titulo"
+                  disabled={noResults}
+                  placeholder="Buscar producto por título"
                   value={search}
                   onChange={(e) => handleChange(e.target.value)}
                 />

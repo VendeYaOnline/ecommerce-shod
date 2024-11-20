@@ -32,6 +32,26 @@ const TableAttribute = ({
   const [active, setActive] = useState(false);
   const idElement = useRef(0);
   const firstLoad = useRef(false);
+  const [noResults, setNoResults] = useState(true);
+
+  useEffect(() => {
+    if (data?.grandTotal) {
+      setNoResults(false);
+    } else {
+      setNoResults(true);
+      setSearch("");
+    }
+  }, [data?.grandTotal]);
+
+  useEffect(() => {
+    if (firstLoad.current) {
+      const timeout = setTimeout(() => {
+        refetch();
+      }, 500);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [search, refetch, firstLoad.current]);
 
   // * Lógica para cambiar de página
   const handleNextPage = () => {
@@ -60,16 +80,6 @@ const TableAttribute = ({
     selectedItem.current = attribute;
   };
 
-  useEffect(() => {
-    if (firstLoad.current) {
-      const timeout = setTimeout(() => {
-        refetch();
-      }, 500);
-
-      return () => clearTimeout(timeout);
-    }
-  }, [search, refetch, firstLoad.current]);
-
   const handleChange = (value: string) => {
     setSearch(value);
     firstLoad.current = true;
@@ -83,6 +93,7 @@ const TableAttribute = ({
         active={active}
         onClose={onClose}
         idElement={idElement.current}
+        search={search}
       />
       <div className="mx-auto">
         <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
@@ -92,6 +103,7 @@ const TableAttribute = ({
 
               <div className="flex">
                 <Input
+                  disabled={noResults}
                   placeholder="Buscar atributo por nombre"
                   value={search}
                   onChange={(e) => handleChange(e.target.value)}

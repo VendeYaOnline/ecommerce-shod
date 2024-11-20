@@ -4,7 +4,7 @@ import classes from "./ModalDeleteAttribute.module.css";
 import { CircleX } from "lucide-react";
 import toast from "react-hot-toast";
 import Button from "../../button/Button";
-import { useQueryProducts } from "@/api/queries";
+import { useQueryAttribute, useQueryProducts } from "@/api/queries";
 import { useMutationDeleteAttribute } from "@/api/mutations";
 import { Dispatch, SetStateAction } from "react";
 import { calculatePageAfterDeletion } from "@/functions";
@@ -15,6 +15,7 @@ interface Props {
   active: boolean;
   onClose: () => void;
   idElement: number;
+  search: string;
 }
 
 const ModalDeleteAttribute = ({
@@ -23,10 +24,12 @@ const ModalDeleteAttribute = ({
   active,
   onClose,
   idElement,
+  search,
 }: Props) => {
   const { mutateAsync, isPending } = useMutationDeleteAttribute();
-  const { refetch } = useQueryProducts(
-    calculatePageAfterDeletion(totalItems - 1, 10)
+  const { refetch } = useQueryAttribute(
+    calculatePageAfterDeletion(totalItems - 1, 10),
+    search
   );
 
   const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {

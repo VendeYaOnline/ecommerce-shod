@@ -18,6 +18,7 @@ const Gallery = () => {
   const [openModal, setOpenModal] = useState(false);
   const [images, setImages] = useState<{ url: string; name: string }[]>([]);
   const [search, setSearch] = useState("");
+  const [noResults, setNoResults] = useState(true);
   const firstLoad = useRef(false);
   const {
     data,
@@ -83,6 +84,14 @@ const Gallery = () => {
   };
 
   useEffect(() => {
+    if (data?.grandTotal) {
+      setNoResults(false);
+    } else {
+      setNoResults(true);
+    }
+  }, [data?.grandTotal]);
+
+  useEffect(() => {
     if (firstLoad.current) {
       const timeout = setTimeout(() => {
         refetch();
@@ -127,6 +136,7 @@ const Gallery = () => {
 
         <div className="flex">
           <Input
+            disabled={noResults}
             placeholder="Buscar imagen"
             value={search}
             onChange={(e) => handleChange(e.target.value)}

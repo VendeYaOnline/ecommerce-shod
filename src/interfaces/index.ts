@@ -36,6 +36,7 @@ export interface ProductsResponse {
 export interface AttributeFind {
   attributes: AttributeUpdated[];
   total: number;
+  grandTotal: number;
   page: number;
   totalPages: number;
 }
@@ -48,6 +49,7 @@ export interface ImagesFind {
     Url: string;
   }[];
   total: number;
+  grandTotal: number;
   page: number;
   totalPages: number;
 }
@@ -55,6 +57,7 @@ export interface ImagesFind {
 export interface ProductFind {
   products: ProductsResponse[];
   total: number;
+  grandTotal: number;
   page: number;
   totalPages: number;
 }
