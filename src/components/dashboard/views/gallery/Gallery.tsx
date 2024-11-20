@@ -18,6 +18,7 @@ const Gallery = () => {
   const [openModal, setOpenModal] = useState(false);
   const [images, setImages] = useState<{ url: string; name: string }[]>([]);
   const [search, setSearch] = useState("");
+  const firstLoad = useRef(false);
   const {
     data,
     refetch,
@@ -82,12 +83,20 @@ const Gallery = () => {
   };
 
   useEffect(() => {
-    const time = setTimeout(() => {
-      refetch();
-    }, 500);
+    // Solo ejecuta refetch si no es la primera carga
+    if (firstLoad.current) {
+      const timeout = setTimeout(() => {
+        refetch();
+      }, 500);
 
-    return () => clearTimeout(time);
-  }, [search, refetch]);
+      return () => clearTimeout(timeout);
+    }
+  }, [search, refetch, firstLoad.current]);
+
+  const handleChange = (value: string) => {
+    setSearch(value);
+    firstLoad.current = true;
+  };
 
   return (
     <>
@@ -121,7 +130,7 @@ const Gallery = () => {
           <Input
             placeholder="Buscar imagen"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => handleChange(e.target.value)}
           />
         </div>
       </div>

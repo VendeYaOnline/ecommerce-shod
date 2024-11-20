@@ -5,6 +5,7 @@ import {
   MutableRefObject,
   SetStateAction,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import classes from "./ModalImages.module.css";
@@ -45,6 +46,8 @@ const ModalImages = ({
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const { data, refetch, isFetching } = useQueryImages(currentPage, search, 10);
+  const firstLoad = useRef(false);
+
   const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     onClose();
@@ -80,14 +83,20 @@ const ModalImages = ({
   };
 
   useEffect(() => {
-    if (search === "") {
-      return;
+    // Solo ejecuta refetch si no es la primera carga
+    if (firstLoad.current) {
+      const timeout = setTimeout(() => {
+        refetch();
+      }, 500);
+
+      return () => clearTimeout(timeout);
     }
-    const time = setTimeout(() => {
-      refetch();
-    }, 500);
-    return () => clearTimeout(time);
-  }, [search, refetch]);
+  }, [search, refetch, firstLoad.current]);
+
+  const handleChange = (value: string) => {
+    setSearch(value);
+    firstLoad.current = true;
+  };
 
   return (
     active && (
@@ -120,7 +129,7 @@ const ModalImages = ({
               <Input
                 placeholder="Buscar imagen"
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => handleChange(e.target.value)}
               />
             </div>
           )}
