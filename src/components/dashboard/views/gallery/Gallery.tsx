@@ -83,7 +83,6 @@ const Gallery = () => {
   };
 
   useEffect(() => {
-    // Solo ejecuta refetch si no es la primera carga
     if (firstLoad.current) {
       const timeout = setTimeout(() => {
         refetch();

@@ -10,9 +10,12 @@ import { axiosConfig } from "./config";
 
 // * ATRIBUTOS
 
-export const getAttributes = async (page: number) => {
-  return (await axiosConfig.get<AttributeFind>(`/get-attributes?page=${page}`))
-    .data;
+export const getAttributes = async (page: number, search: string = "") => {
+  return (
+    await axiosConfig.get<AttributeFind>(
+      `/get-attributes?page=${page}&search=${search}`
+    )
+  ).data;
 };
 
 export const createAttribute = async (data: AttributeData) => {
@@ -29,9 +32,11 @@ export const deleteAttribute = async (idElement: number) => {
 
 // * PRODUCTOS
 
-export const getProducts = async (page: number) => {
+export const getProducts = async (page: number, search: string = "") => {
   const result = (
-    await axiosConfig.get<ProductFind>(`/get-products?page=${page}`)
+    await axiosConfig.get<ProductFind>(
+      `/get-products?page=${page}&search=${search}`
+    )
   ).data;
 
   return {

@@ -1,5 +1,5 @@
 import { useQueryProducts } from "@/api/queries";
-import { EllipsisVertical, PenLine, Trash2 } from "lucide-react";
+import { PenLine, Trash2 } from "lucide-react";
 import {
   Dispatch,
   MutableRefObject,
@@ -14,6 +14,7 @@ import TableSkeleton from "../../skeleton/Skeleton";
 import Image from "next/image";
 import ModalDeleteProduct from "../../modals/modal-delete-product/ModalDeleteProduct";
 import DropdownMenu from "../../dropdown-menu/DropdownMenu";
+import Input from "../../input/Input";
 
 const headers = [
   "Imagen",
@@ -37,9 +38,14 @@ const TableProducts = ({
   selectedItem,
   setActiveModal,
 }: Props) => {
-  const { data, isLoading } = useQueryProducts(currentPage);
   const [active, setActive] = useState(false);
+  const [search, setSearch] = useState("");
+  const firstLoad = useRef(false);
   const idElement = useRef(0);
+  const { data, isLoading, refetch, isFetching } = useQueryProducts(
+    currentPage,
+    search
+  );
 
   const [attributeSelect, setAttributeSelect] = useState<
     Record<string | number, string>
@@ -48,6 +54,16 @@ const TableProducts = ({
   const addDynamicProperty = (key: string | number, value: string) => {
     setAttributeSelect((prevState) => ({ ...prevState, [key]: value }));
   };
+
+  useEffect(() => {
+    if (firstLoad.current) {
+      const timeout = setTimeout(() => {
+        refetch();
+      }, 500);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [search, refetch, firstLoad.current]);
 
   const coco = useCallback(
     (id: any) => {
@@ -88,6 +104,12 @@ const TableProducts = ({
       .filter((propiedad) => objeto[propiedad as TpeValue].length > 0)
       .map((propiedad) => ({ text: propiedad }));
   }
+
+  const handleChange = (value: string) => {
+    setSearch(value);
+    firstLoad.current = true;
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <ModalDeleteProduct
@@ -102,196 +124,209 @@ const TableProducts = ({
           <div className="p-6">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900">Productos</h2>
-              <h2>
+
+              <div className="flex gap-2 items-center">
+                <Input
+                  placeholder="Buscar producto por titulo"
+                  value={search}
+                  onChange={(e) => handleChange(e.target.value)}
+                />
                 {data &&
                   data?.total + "/" + process.env.NEXT_PUBLIC_MAXIMUM_PRODUCTS}
-              </h2>
+              </div>
             </div>
           </div>
-
-          <div className="overflow-x-auto">
-            {data && data?.products.length ? (
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr className="border-t border-gray-200 bg-gray-50/50">
-                    {headers.map((header, index) => (
-                      <th key={index} className="px-6 py-3 text-left">
-                        <div className="flex items-center gap-2 font-medium text-gray-500">
-                          {header}
-                          {/*   <ArrowUpDown className="h-4 w-4" /> */}
-                        </div>
+          {!isFetching && (
+            <div className="overflow-x-auto">
+              {data && !isFetching && data?.products.length ? (
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="border-t border-gray-200 bg-gray-50/50">
+                      {headers.map((header, index) => (
+                        <th key={index} className="px-6 py-3 text-left">
+                          <div className="flex items-center gap-2 font-medium text-gray-500">
+                            {header}
+                            {/*   <ArrowUpDown className="h-4 w-4" /> */}
+                          </div>
+                        </th>
+                      ))}
+                      <th className="px-6 py-3 text-right">
+                        <span className="font-medium text-gray-500">
+                          Acciones
+                        </span>
                       </th>
-                    ))}
-                    <th className="px-6 py-3 text-right">
-                      <span className="font-medium text-gray-500">
-                        Acciones
-                      </span>
-                    </th>
-                  </tr>
-                </thead>
+                    </tr>
+                  </thead>
 
-                <tbody className="divide-y divide-gray-200">
-                  {data.products
-                    .sort((a, b) => a.id - b.id)
-                    .map((product) => (
-                      <tr
-                        key={product.id}
-                        className="group hover:bg-gray-50/50 transition-colors duration-200"
-                      >
-                        <td className="px-6 py-4">
-                          <div className="skeleton-loader-image">
-                            <Image
-                              priority
-                              src={product.image_product}
-                              alt="Imagen del producto"
-                              width={80}
-                              height={80}
-                              style={{
-                                width: 80,
-                                height: 80,
-                                objectFit: "cover",
-                              }}
-                              className="rounded-lg"
-                            />
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="text-gray-600">{product.title}</span>
-                        </td>
+                  <tbody className="divide-y divide-gray-200">
+                    {data.products
+                      .sort((a, b) => a.id - b.id)
+                      .map((product) => (
+                        <tr
+                          key={product.id}
+                          className="group hover:bg-gray-50/50 transition-colors duration-200"
+                        >
+                          <td className="px-6 py-4">
+                            <div className="skeleton-loader-image">
+                              <Image
+                                priority
+                                src={product.image_product}
+                                alt="Imagen del producto"
+                                width={80}
+                                height={80}
+                                style={{
+                                  width: 80,
+                                  height: 80,
+                                  objectFit: "cover",
+                                }}
+                                className="rounded-lg"
+                              />
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="text-gray-600">
+                              {product.title}
+                            </span>
+                          </td>
 
-                        <td className="px-6 py-4">
-                          <span className="text-gray-600">{product.price}</span>
-                        </td>
-                        <td className="px-3 w-0">
-                          <div className="flex items-center justify-between gap-2">
-                            {!attributeList(product.attributes).length ? (
-                              <div className="w-[150px] ml-3">
-                                <span className="text-gray-600 text-sm">
-                                  Sin atributos
-                                </span>
-                              </div>
-                            ) : (
-                              <div className="flex items-center">
-                                {coco(product.id) ? (
-                                  <div className="container-attributes">
-                                    {coco(product.id) === "Color"
-                                      ? product.attributes[
-                                          coco(product.id)
-                                        ]?.map((item: any, index) => (
-                                          <div
-                                            key={index}
-                                            style={{
-                                              backgroundColor: item.color,
-                                            }}
-                                            className={`rounded-full w-4 h-4`}
-                                          />
-                                        ))
-                                      : product.attributes[
-                                          coco(product.id)
-                                        ]?.map((item: any, index) => (
-                                          <div key={index} className="burble">
-                                            {item}
-                                          </div>
-                                        ))}
-                                  </div>
-                                ) : (
-                                  <div className="w-[150px] ml-3">
-                                    <span className="text-gray-600 text-sm">
-                                      Selecciona un atributo
-                                    </span>
-                                  </div>
-                                )}
+                          <td className="px-6 py-4">
+                            <span className="text-gray-600">
+                              {product.price}
+                            </span>
+                          </td>
+                          <td className="px-3 w-0">
+                            <div className="flex items-center justify-between gap-2">
+                              {!attributeList(product.attributes).length ? (
+                                <div className="w-[150px] ml-3">
+                                  <span className="text-gray-600 text-sm">
+                                    Sin atributos
+                                  </span>
+                                </div>
+                              ) : (
+                                <div className="flex items-center">
+                                  {coco(product.id) ? (
+                                    <div className="container-attributes">
+                                      {coco(product.id) === "Color"
+                                        ? product.attributes[
+                                            coco(product.id)
+                                          ]?.map((item: any, index) => (
+                                            <div
+                                              key={index}
+                                              style={{
+                                                backgroundColor: item.color,
+                                              }}
+                                              className={`rounded-full w-4 h-4`}
+                                            />
+                                          ))
+                                        : product.attributes[
+                                            coco(product.id)
+                                          ]?.map((item: any, index) => (
+                                            <div key={index} className="burble">
+                                              {item}
+                                            </div>
+                                          ))}
+                                    </div>
+                                  ) : (
+                                    <div className="w-[150px] ml-3">
+                                      <span className="text-gray-600 text-sm">
+                                        Selecciona un atributo
+                                      </span>
+                                    </div>
+                                  )}
 
-                                <DropdownMenu
-                                  id={product.id}
-                                  addDynamicProperty={addDynamicProperty}
-                                  itemSelected={coco(product.id)}
-                                  menuItems={attributeList(product.attributes)}
-                                />
-                              </div>
-                            )}
-                          </div>
-                        </td>
+                                  <DropdownMenu
+                                    id={product.id}
+                                    addDynamicProperty={addDynamicProperty}
+                                    itemSelected={coco(product.id)}
+                                    menuItems={attributeList(
+                                      product.attributes
+                                    )}
+                                  />
+                                </div>
+                              )}
+                            </div>
+                          </td>
 
-                        <td className="px-6 py-4">
-                          <span className="text-gray-600">
-                            {product.description}
-                          </span>
-                        </td>
+                          <td className="px-6 py-4">
+                            <span className="text-gray-600">
+                              {product.description}
+                            </span>
+                          </td>
 
-                        <td className="px-6 py-4">
-                          <span className="text-gray-600">
-                            {product.discount}%
-                          </span>
-                        </td>
+                          <td className="px-6 py-4">
+                            <span className="text-gray-600">
+                              {product.discount}%
+                            </span>
+                          </td>
 
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-3 overflow-auto">
-                            {product.images.length ? (
-                              product.images.map(
-                                (image: string, index: number) => (
-                                  <div
-                                    className="skeleton-loader-image-table"
-                                    key={index}
-                                  >
-                                    <Image
-                                      priority
-                                      src={image}
-                                      alt="Imagen del producto"
-                                      width={40}
-                                      height={40}
-                                      style={{
-                                        width: 40,
-                                        height: 40,
-                                        objectFit: "cover",
-                                      }}
-                                      className="rounded-lg"
-                                    />
-                                  </div>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-3 overflow-auto">
+                              {product.images.length ? (
+                                product.images.map(
+                                  (image: string, index: number) => (
+                                    <div
+                                      className="skeleton-loader-image-table"
+                                      key={index}
+                                    >
+                                      <Image
+                                        priority
+                                        src={image}
+                                        alt="Imagen del producto"
+                                        width={40}
+                                        height={40}
+                                        style={{
+                                          width: 40,
+                                          height: 40,
+                                          objectFit: "cover",
+                                        }}
+                                        className="rounded-lg"
+                                      />
+                                    </div>
+                                  )
                                 )
-                              )
-                            ) : (
-                              <span>Sin imagenes</span>
-                            )}
-                          </div>
-                        </td>
+                              ) : (
+                                <span>Sin imagenes</span>
+                              )}
+                            </div>
+                          </td>
 
-                        <td className="px-6 py-4 text-right">
-                          <div className="flex justify-end gap-3">
-                            <PenLine
-                              size={17}
-                              color="#3D5300"
-                              className="cursor-pointer"
-                              onClick={() => openModal(product)}
-                            />
-                            <Trash2
-                              size={17}
-                              color="#FA4032"
-                              className="cursor-pointer"
-                              onClick={() => onOpen(product.id)}
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            ) : (
-              <div className="px-6 h-10">
-                <h1 className="text-slate-400">No hay productos</h1>
-              </div>
-            )}
-          </div>
+                          <td className="px-6 py-4 text-right">
+                            <div className="flex justify-end gap-3">
+                              <PenLine
+                                size={17}
+                                color="#3D5300"
+                                className="cursor-pointer"
+                                onClick={() => openModal(product)}
+                              />
+                              <Trash2
+                                size={17}
+                                color="#FA4032"
+                                className="cursor-pointer"
+                                onClick={() => onOpen(product.id)}
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              ) : (
+                <div className="px-6 h-10">
+                  <h1 className="text-slate-400">No hay productos</h1>
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="border-t border-gray-200 px-6 py-4">
-            {isLoading && <TableSkeleton />}
+            {isFetching && <TableSkeleton />}
             <p className="text-sm text-gray-500">
               Mostrando {data?.products.length || 0} de {data?.total || 0}{" "}
               productos
             </p>
           </div>
         </div>
-        {data && data.totalPages > 0 && (
+        {!isFetching && data && data.totalPages > 0 && (
           <nav className="flex items-center justify-center space-x-2 mt-4">
             <button
               className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:outline-none"
