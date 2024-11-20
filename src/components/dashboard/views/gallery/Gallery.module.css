@@ -2,9 +2,10 @@
   margin-top: 20px;
   border-radius: 10px;
   height: auto;
-  overflow: auto;
+  overflow: hidden;
   padding: 10px;
   background: rgba(255, 255, 255, 0.28);
+  height: 500px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(4.7px);
   -webkit-backdrop-filter: blur(4.7px);
@@ -12,10 +13,12 @@
 }
 
 .container-images {
-  max-height: 500px;
+  max-height: 480px;
+  overflow: auto;
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+  box-sizing: border-box;
 }
 
 .icon-delete-image {
