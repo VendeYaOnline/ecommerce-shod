@@ -30,6 +30,8 @@ interface Props {
   setCurrentPage: Dispatch<SetStateAction<number>>;
   selectedItem: MutableRefObject<ProductTable | undefined>;
   setActiveModal: Dispatch<SetStateAction<boolean>>;
+  search: string;
+  setSearch: Dispatch<SetStateAction<string>>;
 }
 
 const TableProducts = ({
@@ -37,13 +39,15 @@ const TableProducts = ({
   setCurrentPage,
   selectedItem,
   setActiveModal,
+  setSearch,
+  search,
 }: Props) => {
   const [active, setActive] = useState(false);
-  const [search, setSearch] = useState("");
   const firstLoad = useRef(false);
   const idElement = useRef(0);
   const { data, refetch, isFetching } = useQueryProducts(currentPage, search);
   const [noResults, setNoResults] = useState(true);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const [attributeSelect, setAttributeSelect] = useState<
     Record<string | number, string>
   >({});
@@ -60,17 +64,7 @@ const TableProducts = ({
     }
   }, [data?.grandTotal]);
 
-  useEffect(() => {
-    if (firstLoad.current) {
-      const timeout = setTimeout(() => {
-        refetch();
-      }, 500);
-
-      return () => clearTimeout(timeout);
-    }
-  }, [search, refetch, firstLoad.current]);
-
-  const coco = useCallback(
+  const attributesProducts = useCallback(
     (id: any) => {
       return attributeSelect[id] as TpeValue;
     },
@@ -113,6 +107,14 @@ const TableProducts = ({
   const handleChange = (value: string) => {
     setSearch(value);
     firstLoad.current = true;
+
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    debounceRef.current = setTimeout(() => {
+      refetch();
+    }, 500);
   };
 
   return (
@@ -210,11 +212,12 @@ const TableProducts = ({
                                 </div>
                               ) : (
                                 <div className="flex items-center">
-                                  {coco(product.id) ? (
+                                  {attributesProducts(product.id) ? (
                                     <div className="container-attributes">
-                                      {coco(product.id) === "Color"
+                                      {attributesProducts(product.id) ===
+                                      "Color"
                                         ? product.attributes[
-                                            coco(product.id)
+                                            attributesProducts(product.id)
                                           ]?.map((item: any, index) => (
                                             <div
                                               key={index}
@@ -225,7 +228,7 @@ const TableProducts = ({
                                             />
                                           ))
                                         : product.attributes[
-                                            coco(product.id)
+                                            attributesProducts(product.id)
                                           ]?.map((item: any, index) => (
                                             <div key={index} className="burble">
                                               {item}
@@ -243,7 +246,9 @@ const TableProducts = ({
                                   <DropdownMenu
                                     id={product.id}
                                     addDynamicProperty={addDynamicProperty}
-                                    itemSelected={coco(product.id)}
+                                    itemSelected={attributesProducts(
+                                      product.id
+                                    )}
                                     menuItems={attributeList(
                                       product.attributes
                                     )}

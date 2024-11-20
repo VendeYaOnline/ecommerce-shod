@@ -93,3 +93,7 @@ export const getImages = async (
   ).data;
   return result;
 };
+
+export const deleteImage = async (idElement: string) => {
+  return axiosConfig.delete(`/delete-image/${idElement}`);
+};

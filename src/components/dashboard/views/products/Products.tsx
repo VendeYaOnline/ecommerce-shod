@@ -8,6 +8,7 @@ import { Package } from "lucide-react";
 const Products = () => {
   const [activeModal, setActiveModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [search, setSearch] = useState("");
   const selectedItem = useRef<ProductTable | undefined>(undefined);
 
   return (
@@ -16,7 +17,6 @@ const Products = () => {
         <Button onClik={() => setActiveModal(true)}>
           Crear producto <Package size={18} />
         </Button>
-        
       </div>
 
       <ModalProduct
@@ -24,6 +24,7 @@ const Products = () => {
         setCurrentPage={setCurrentPage}
         active={activeModal}
         selectedItem={selectedItem}
+        search={search}
         onClose={() => {
           setActiveModal(false), (selectedItem.current = undefined);
         }}
@@ -33,6 +34,8 @@ const Products = () => {
         setCurrentPage={setCurrentPage}
         selectedItem={selectedItem}
         setActiveModal={setActiveModal}
+        setSearch={setSearch}
+        search={search}
       />
     </section>
   );

@@ -38,6 +38,7 @@ interface Props {
   setCurrentPage: Dispatch<SetStateAction<number>>;
   active: boolean;
   onClose: () => void;
+  search: string;
 }
 
 const ModalProduct = ({
@@ -46,11 +47,12 @@ const ModalProduct = ({
   setCurrentPage,
   active,
   onClose,
+  search,
 }: Props) => {
   const [selectedAttribute, setSelectedAttribute] = useState("");
   const imagesProducts = useRef<File[]>([]);
   const imagesUrls = useRef<string[]>([]);
-  const { refetch } = useQueryProducts(currentPage);
+  const { refetch } = useQueryProducts(currentPage, search);
   const selectedType = useRef("");
   const [value, setValue] = useState({ valueString: "", valueObject: "" });
   const [optionImage, setOptionImage] = useState(0);
@@ -81,8 +83,8 @@ const ModalProduct = ({
   const { mutateAsync, isPending } = useMutationProduct();
   const { mutateAsync: mutateAsyncUpdated, isPending: isPendingUpdated } =
     useMutationUpdatedProduct();
-  const { data } = useQueryAttribute(currentPage);
-  const { data: products } = useQueryProducts(currentPage);
+  const { data } = useQueryAttribute(currentPage, "");
+  const { data: products } = useQueryProducts(currentPage, search);
 
   useEffect(() => {
     if (optionImage === 1) {

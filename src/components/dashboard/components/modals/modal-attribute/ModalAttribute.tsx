@@ -32,6 +32,7 @@ interface Props {
   active: boolean;
   selectedItem: MutableRefObject<AttributeUpdated | undefined>;
   onClose: () => void;
+  search: string;
 }
 
 const ModalAttribute = ({
@@ -39,9 +40,10 @@ const ModalAttribute = ({
   active,
   onClose,
   selectedItem,
+  search,
 }: Props) => {
   const [type, setType] = useState("");
-  const { data, refetch } = useQueryAttribute(currentPage);
+  const { data, refetch } = useQueryAttribute(currentPage, search);
   const [isValid, setisValid] = useState(false);
   const [nameAttribute, setNameAttribute] = useState("");
   const { mutateAsync: mutateAsyncCreate, isPending: isPendingCreate } =

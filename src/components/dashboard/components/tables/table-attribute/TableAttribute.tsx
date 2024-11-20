@@ -19,6 +19,8 @@ interface Props {
   setCurrentPage: Dispatch<SetStateAction<number>>;
   selectedItem: MutableRefObject<AttributeData | undefined>;
   setActiveModal: Dispatch<SetStateAction<boolean>>;
+  setSearch: Dispatch<SetStateAction<string>>;
+  search: string;
 }
 
 const TableAttribute = ({
@@ -26,11 +28,13 @@ const TableAttribute = ({
   setCurrentPage,
   selectedItem,
   setActiveModal,
+  setSearch,
+  search,
 }: Props) => {
-  const [search, setSearch] = useState("");
   const { data, isFetching, refetch } = useQueryAttribute(currentPage, search);
   const [active, setActive] = useState(false);
   const idElement = useRef(0);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const firstLoad = useRef(false);
   const [noResults, setNoResults] = useState(true);
 
@@ -42,16 +46,6 @@ const TableAttribute = ({
       setSearch("");
     }
   }, [data?.grandTotal]);
-
-  useEffect(() => {
-    if (firstLoad.current) {
-      const timeout = setTimeout(() => {
-        refetch();
-      }, 500);
-
-      return () => clearTimeout(timeout);
-    }
-  }, [search, refetch, firstLoad.current]);
 
   // * Lógica para cambiar de página
   const handleNextPage = () => {
@@ -83,6 +77,14 @@ const TableAttribute = ({
   const handleChange = (value: string) => {
     setSearch(value);
     firstLoad.current = true;
+
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    debounceRef.current = setTimeout(() => {
+      refetch();
+    }, 500);
   };
 
   return (

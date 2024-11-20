@@ -4,10 +4,11 @@ import classes from "./Gallery.module.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import IconDelete from "/public/icon-delete.png";
 
 import { useMutationImages } from "@/api/mutations";
 import { useQueryImages } from "@/api/queries";
-import { ModalUploadImages } from "../../components/modals";
+import { ModalDeleteImage, ModalUploadImages } from "../../components/modals";
 import Pagination from "../../components/pagination/Pagination";
 import Input from "../../components/input/Input";
 
@@ -16,9 +17,12 @@ const Gallery = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const { mutateAsync, isPending } = useMutationImages();
   const [openModal, setOpenModal] = useState(false);
+  const idElement = useRef("");
+  const [active, setActive] = useState(false);
   const [images, setImages] = useState<{ url: string; name: string }[]>([]);
   const [search, setSearch] = useState("");
   const [noResults, setNoResults] = useState(true);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const firstLoad = useRef(false);
   const {
     data,
@@ -77,10 +81,19 @@ const Gallery = () => {
     }
   };
 
+  const onOpen = (id: string) => {
+    setActive(true);
+    idElement.current = id;
+  };
+
   const onClose = () => {
     setOpenModal(false);
     refImages.current = [];
     setImages([]);
+  };
+
+  const onCloseDelete = () => {
+    setActive(false);
   };
 
   useEffect(() => {
@@ -88,22 +101,21 @@ const Gallery = () => {
       setNoResults(false);
     } else {
       setNoResults(true);
+      setSearch("");
     }
   }, [data?.grandTotal]);
-
-  useEffect(() => {
-    if (firstLoad.current) {
-      const timeout = setTimeout(() => {
-        refetch();
-      }, 500);
-
-      return () => clearTimeout(timeout);
-    }
-  }, [search, refetch, firstLoad.current]);
 
   const handleChange = (value: string) => {
     setSearch(value);
     firstLoad.current = true;
+
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    debounceRef.current = setTimeout(() => {
+      refetch();
+    }, 500);
   };
 
   return (
@@ -117,6 +129,14 @@ const Gallery = () => {
         isPending={isPending}
         mutateAsync={mutateAsync}
         refetch={refetch}
+      />
+      <ModalDeleteImage
+        setCurrentPage={setCurrentPage}
+        totalItems={data?.total || 0}
+        active={active}
+        onClose={onCloseDelete}
+        idElement={idElement.current}
+        search={search}
       />
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div>
@@ -169,6 +189,14 @@ const Gallery = () => {
             data?.images.length > 0 &&
             data.images.map((image, index) => (
               <div key={index} className={classes["skeleton-loader"]}>
+                <Image
+                  src={IconDelete}
+                  width={15}
+                  height={15}
+                  alt="Eliminar"
+                  className={classes["icon-delete-image"]}
+                  onClick={() => onOpen(image.Key)}
+                />
                 <Image
                   className="rounded-[5px] bg-gray-300"
                   src={image.Url}
