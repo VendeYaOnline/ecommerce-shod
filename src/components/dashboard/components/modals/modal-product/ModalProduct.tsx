@@ -159,7 +159,7 @@ const ModalProduct = ({
       return true;
     }
   };
-
+  console.log("imagesUrls.current", imagesUrls.current);
   const cleanField = useCallback(() => {
     setValuesForm({ title: "", price: "", discount: "0", description: "" });
     setValuesAttributes({
@@ -207,6 +207,15 @@ const ModalProduct = ({
               : "[]"
           );
 
+          formData.append(
+            "image_positions",
+            JSON.stringify(
+              productImages.map((elemento, indice) => ({
+                name: elemento.name,
+              }))
+            )
+          );
+
           formData.append("attributes", JSON.stringify(valuesAttributes));
           // Agrega el resto de los valores del formulario
           Object.entries(valuesForm).forEach(([key, value]) => {
@@ -247,6 +256,15 @@ const ModalProduct = ({
               imagesUrls.current.length
                 ? JSON.stringify(imagesUrls.current)
                 : "[]"
+            );
+
+            formData.append(
+              "image_positions",
+              JSON.stringify(
+                productImages.map((elemento, indice) => ({
+                  name: elemento.name,
+                }))
+              )
             );
 
             formData.append("attributes", JSON.stringify(valuesAttributes));
@@ -552,14 +570,16 @@ const ModalProduct = ({
               }
             />
           </div>
-
           <h2>{`Imagenes del producto ${productImages.length}/5`}</h2>
           <section className="flex flex-wrap gap-3">
             {productImages.map((image, index) => (
               <div className="relative" key={index}>
                 <div className="skeleton-loader-image">
-                  <img
+                  <Image
+                    width={80}
+                    height={80}
                     src={image.url}
+                    alt={image.name}
                     className="rounded-[5px]"
                     style={{
                       objectFit: "cover",
@@ -568,7 +588,6 @@ const ModalProduct = ({
                     }}
                   />
                 </div>
-
                 <Image
                   src={IconDelete}
                   width={10}
