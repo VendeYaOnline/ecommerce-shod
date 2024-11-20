@@ -2,16 +2,20 @@ import { useQuery } from "@tanstack/react-query";
 import { getAttributes, getImages, getProducts } from "./request";
 
 export const useQueryAttribute = (currentPage: number) => {
+  const validPage = currentPage > 0 ? currentPage : 1;
   return useQuery({
-    queryKey: ["attributes", currentPage],
-    queryFn: () => getAttributes(currentPage),
+    queryKey: ["attributes", validPage],
+    queryFn: () => getAttributes(validPage),
+    enabled: currentPage > 0,
   });
 };
 
 export const useQueryProducts = (currentPage: number) => {
+  const validPage = currentPage > 0 ? currentPage : 1;
   return useQuery({
-    queryKey: ["products", currentPage],
-    queryFn: () => getProducts(currentPage),
+    queryKey: ["products", validPage],
+    queryFn: () => getProducts(validPage),
+    enabled: currentPage > 0,
   });
 };
 
@@ -20,9 +24,11 @@ export const useQueryImages = (
   search: string,
   limit: number
 ) => {
+  const validPage = currentPage > 0 ? currentPage : 1;
   return useQuery({
-    queryKey: ["images", currentPage],
-    queryFn: () => getImages(currentPage, search, limit),
+    queryKey: ["images", validPage],
+    queryFn: () => getImages(validPage, search, limit),
     refetchOnWindowFocus: false,
+    enabled: currentPage > 0,
   });
 };

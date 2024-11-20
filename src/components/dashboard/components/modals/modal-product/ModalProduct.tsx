@@ -159,7 +159,6 @@ const ModalProduct = ({
       return true;
     }
   };
-  console.log("imagesUrls.current", imagesUrls.current);
   const cleanField = useCallback(() => {
     setValuesForm({ title: "", price: "", discount: "0", description: "" });
     setValuesAttributes({
