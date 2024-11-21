@@ -8,7 +8,12 @@ interface Props {
 
 const Textarea = ({ value, onChange }: Props) => {
   return (
-    <textarea value={value} onChange={onChange} className={classes.textarea} />
+    <textarea
+      value={value}
+      onChange={onChange}
+      className={classes.textarea}
+      maxLength={280}
+    />
   );
 };
 

@@ -63,6 +63,7 @@ const ModalProduct = ({
     price: "",
     discount: "0",
     description: "",
+    feature: "",
   });
   const [valuesAttributes, setValuesAttributes] = useState<ValuesAttributes>({
     Color: [],
@@ -123,6 +124,7 @@ const ModalProduct = ({
         description: selectedItem.current.description,
         discount: selectedItem.current.discount + "",
         price: selectedItem.current.price,
+        feature: selectedItem.current.feature,
       });
 
       setValuesAttributes(selectedItem.current.attributes);
@@ -162,7 +164,13 @@ const ModalProduct = ({
     }
   };
   const cleanField = useCallback(() => {
-    setValuesForm({ title: "", price: "", discount: "0", description: "" });
+    setValuesForm({
+      title: "",
+      price: "",
+      discount: "0",
+      description: "",
+      feature: "",
+    });
     setValuesAttributes({
       Color: [],
       Dimensión: [],
@@ -447,6 +455,7 @@ const ModalProduct = ({
                     setActiveModal(true), (typeImage.current = "main_image");
                   }}
                 >
+                  <span className="text-red-600 absolute right-2 top-1">*</span>
                   <div className={classes.capa}>
                     <ImageUp size={60} strokeWidth={1} />
                   </div>
@@ -467,22 +476,29 @@ const ModalProduct = ({
 
               <section className="flex flex-col gap-3 ml-3">
                 <div className="flex flex-col gap-1">
-                  <label htmlFor="title">Titulo</label>
+                  <label htmlFor="title">
+                    Titulo <span className="text-red-600">*</span>
+                  </label>
                   <Input
                     type="string"
                     value={valuesForm.title}
+                    maxLength={30}
                     onChange={(e) => {
-                      if (e.target.value.length < 30) {
-                        setValuesForm({ ...valuesForm, title: e.target.value });
-                      }
+                      setValuesForm({ ...valuesForm, title: e.target.value });
                     }}
                   />
+                  <span className="text-xs text-slate-600">
+                    {valuesForm.title.length + "/" + 30}
+                  </span>
                 </div>
 
                 <div className="flex gap-3">
                   <div className="flex flex-col gap-1">
-                    <label htmlFor="title">Precio</label>
+                    <label htmlFor="title">
+                      Precio <span className="text-red-600">*</span>
+                    </label>
                     <Input
+                      maxLength={13}
                       type="string"
                       value={valuesForm.price}
                       placeholder="$"
@@ -495,7 +511,9 @@ const ModalProduct = ({
                     />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <label htmlFor="title">Descuento</label>
+                    <label htmlFor="title">
+                      Descuento <span className="text-red-600">*</span>
+                    </label>
                     <Input
                       type="string"
                       value={valuesForm.discount}
@@ -563,14 +581,34 @@ const ModalProduct = ({
           )}
 
           <div className="mt-1 flex flex-col gap-1">
-            <label>Descripcion</label>
+            <label>
+              Descripción <span className="text-red-600">*</span>
+            </label>
             <Textarea
               value={valuesForm.description}
               onChange={(e) =>
                 setValuesForm({ ...valuesForm, description: e.target.value })
               }
             />
+            <span className="text-xs text-slate-600">
+              {valuesForm.description.length + "/" + 280}
+            </span>
           </div>
+
+          <div className="mt-1 flex flex-col gap-1">
+            <label>Característica</label>
+            <Input
+              value={valuesForm.feature}
+              maxLength={17}
+              onChange={(e) =>
+                setValuesForm({ ...valuesForm, feature: e.target.value })
+              }
+            />
+            <span className="text-xs text-slate-600">
+              {valuesForm.feature.length + "/" + 17}
+            </span>
+          </div>
+
           <h2>{`Imagenes del producto ${productImages.length}/5`}</h2>
           <section className="flex flex-wrap gap-3">
             {productImages.map((image, index) => (

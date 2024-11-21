@@ -29,6 +29,7 @@ export interface ProductsResponse {
   price: string;
   attributes: string;
   description: string;
+  feature: string;
   discount: number;
   images: string[];
 }
@@ -99,6 +100,7 @@ export interface ProductTable {
   title: string;
   price: string;
   description: string;
+  feature: string;
   discount: number;
   images: string[];
 }

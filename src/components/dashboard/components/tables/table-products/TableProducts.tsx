@@ -22,6 +22,7 @@ const headers = [
   "Precio",
   "Atributos",
   "Descripción",
+  "Característica",
   "Descunto",
   "Imagenes",
 ];
@@ -260,6 +261,12 @@ const TableProducts = ({
                           <td className="px-6 py-4">
                             <span className="text-gray-600">
                               {product.description}
+                            </span>
+                          </td>
+
+                          <td className="px-6 py-4">
+                            <span className="text-gray-600">
+                              {product.feature !== "" ? product.feature : "---"}
                             </span>
                           </td>
 

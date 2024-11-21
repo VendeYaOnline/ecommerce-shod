@@ -7,6 +7,7 @@ interface Props {
   type?: "string" | "number";
   disabled?: boolean;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  maxLength?: number;
 }
 
 const Input = ({
@@ -15,6 +16,7 @@ const Input = ({
   type,
   placeholder,
   disabled = false,
+  maxLength,
 }: Props) => {
   return (
     <input
@@ -24,6 +26,7 @@ const Input = ({
       onChange={onChange}
       className={classes.input}
       disabled={disabled}
+      maxLength={maxLength}
       id="title"
     />
   );
