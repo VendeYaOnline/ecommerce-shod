@@ -103,13 +103,14 @@ const TableAttribute = ({
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900">Atributos</h2>
 
-              <div className="flex">
+              <div className="flex gap-2 items-center">
                 <Input
                   disabled={noResults}
-                  placeholder="Buscar atributo por nombre"
+                  placeholder="Buscar por nombre"
                   value={search}
                   onChange={(e) => handleChange(e.target.value)}
                 />
+                {data && data?.total + "/" + 30}
               </div>
             </div>
           </div>

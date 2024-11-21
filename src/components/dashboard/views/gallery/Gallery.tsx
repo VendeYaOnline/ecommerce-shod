@@ -23,6 +23,7 @@ const Gallery = () => {
   const [search, setSearch] = useState("");
   const [noResults, setNoResults] = useState(true);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const [valid, setValid] = useState(true);
   const firstLoad = useRef(false);
   const {
     data,
@@ -38,6 +39,15 @@ const Gallery = () => {
     }
   }, [fileInputRef.current]);
 
+  useEffect(() => {
+    const result = refImages.current.some((i) => i.size > 2000000);
+    if (result) {
+      setValid(true);
+    } else {
+      setValid(false);
+    }
+  }, [refImages.current]);
+
   const handleUpImages = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const newFiles: File[] = [];
@@ -45,14 +55,16 @@ const Gallery = () => {
       Array.from(event.target.files).forEach((file) => {
         // Validar extensión de archivo
         if (file.size > 2000000) {
-          toast.error("La imagen supera el tamaño máximo, que son 2 MB");
+          toast.error(
+            `La imagen ${file.name} no se subió porque supera el tamaño máximo, que son 2 MB`
+          );
         } else if (refImages.current.some((i) => i.name === file.name)) {
           toast.error(`La imagen ${file.name} ya existe.`);
         } else {
           refImages.current = [...refImages.current, file];
           newFiles.push(file);
-          setOpenModal(true);
         }
+        setOpenModal(true);
       });
 
       // Actualizar el estado con las nuevas imágenes
@@ -129,6 +141,7 @@ const Gallery = () => {
         isPending={isPending}
         mutateAsync={mutateAsync}
         refetch={refetch}
+        valid={valid}
       />
       <ModalDeleteImage
         setCurrentPage={setCurrentPage}
@@ -148,19 +161,27 @@ const Gallery = () => {
             style={{ display: "none" }}
             onChange={handleUpImages}
           />
-          <Button onClik={handleButtonClick} disabled={data?.total === 600}>
-            Cargar imagenes
+          <Button
+            onClik={handleButtonClick}
+            disabled={data && data?.grandTotal >= 600}
+          >
+            {data && data?.grandTotal >= 600
+              ? "Límite alcanzado"
+              : "Cargar imagenes"}
+
             <ImagePlus />
           </Button>
         </div>
 
-        <div className="flex">
+        <div className="flex gap-2 items-center">
           <Input
             disabled={noResults}
             placeholder="Buscar imagen"
             value={search}
             onChange={(e) => handleChange(e.target.value)}
           />
+
+          {data && data?.total + "/" + 600}
         </div>
       </div>
 

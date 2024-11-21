@@ -18,6 +18,7 @@ interface ValueImage {
 interface Props {
   images: ValueImage[];
   isPending: boolean;
+  valid: boolean;
   mutateAsync: UseMutateAsyncFunction<
     AxiosResponse<any, any>,
     Error,
@@ -40,6 +41,7 @@ const ModalUploadImages = ({
   isPending,
   mutateAsync,
   refetch,
+  valid
 }: Props) => {
   const handleContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -132,7 +134,7 @@ const ModalUploadImages = ({
             )}
           </div>
 
-          <Button onClik={handleSubmit} disabled={isPending}>
+          <Button onClik={handleSubmit} disabled={valid || isPending}>
             {isPending ? (
               <div className="loader" />
             ) : (

@@ -135,12 +135,11 @@ const TableProducts = ({
               <div className="flex gap-2 items-center">
                 <Input
                   disabled={noResults}
-                  placeholder="Buscar producto por título"
+                  placeholder="Buscar por título"
                   value={search}
                   onChange={(e) => handleChange(e.target.value)}
                 />
-                {data &&
-                  data?.total + "/" + process.env.NEXT_PUBLIC_MAXIMUM_PRODUCTS}
+                {data && data?.total + "/" + 100}
               </div>
             </div>
           </div>
